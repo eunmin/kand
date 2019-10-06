@@ -25,6 +25,7 @@
 - [How to Write a (Lisp) Interpreter (in Python)](http://norvig.com/lispy.html) (python)
 - [Lispreter](https://github.com/AoHRuthless/Lispreter) (java)
 - [haskell-lisp-interpreter](https://github.com/IvanIvanov/haskell-lisp-interpreter) (haskell)
+- [SICP lisp evaluator](https://github.com/eunmin/sicp-ch4/blob/master/src/sicp_ch4/core.clj) (clojure)
 
 ### Libraries
 
