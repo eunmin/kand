@@ -1,5 +1,3 @@
-module Main where
-
 import qualified Data.Map as Map
 import Type
 import Core (plus, minus)
@@ -11,7 +9,8 @@ globalEnv = Map.fromList [
   ("x", Nm 1)
   ]
 
-main =
+main :: IO()
+main = do
   putStrLn $ show (eval globalEnv expression)
   where
     -- (+ 10 (- 100 10)) ;; 100
