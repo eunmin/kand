@@ -12,12 +12,15 @@ data Env = EmptyEnv
          | Env Frame Env
          deriving (Show)
 
+
 data Exp = Nm Double
+          | Boolean Bool
           | Lambda [Exp] Exp
           | Primitive ([Exp] -> Exp)
           | Sym String
           | Def Exp Exp
           | Application [Exp]
+          | If Exp Exp Exp
           | Error String
           | Unit
 
@@ -37,6 +40,7 @@ showExp (Def _ _) = "def"
 showExp (Application _) = "application"
 showExp (Primitive _) = "primitive"
 showExp (Sym name) = "symbol " ++ name
+showExp (Boolean b) = show b
 showExp (Error message) = "Error: " ++ message
 
 lookupValue :: String -> Env -> Exp

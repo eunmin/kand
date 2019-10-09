@@ -24,5 +24,14 @@ analyze (Application (operator:operands)) =
 analyze (Sym name) = \env -> (lookupValue name env, env)
 
 analyze (Def (Sym name) exp) = \env -> (Unit, insertValue name exp env)
+
+analyze (If predicate consequent alternative) =
+  \env ->
+    let ((Boolean p), _) = (pproc env)
+    in if p then cproc env else aproc env
+  where
+    pproc = analyze predicate
+    cproc = analyze consequent
+    aproc = analyze alternative
   
 analyze x = \env -> (x, env)
