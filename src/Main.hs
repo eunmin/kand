@@ -2,6 +2,7 @@ import qualified Data.Map as Map
 import Type
 import Core
 import Analyzer
+import Parser
 
 globalEnv = EmptyEnv
 
@@ -21,12 +22,11 @@ main = do
                                 Application [Primitive minus, Sym "x", Sym "y"]
                                 )
                             )
-    -- (+ 10 (- 100 10)) ;; 100
-    code = Application [Sym "+", Nm 10, Application [Sym "-", Nm 100, Nm 10]]
-    -- (def sum-to-10 [i result]
+    code = parse "(+ 10 (- 100 10))"
+    -- (def sum-to-10 (fn [i result]
     --    (if (<= i 10)
     --      (sum-to-10 (+ i 1) (+ result i))
-    --      result))
+    --      result)))
     defSumTo10 = Def (Sym "sum-to-10") (
       (Lambda [Sym "i", Sym "result"] (
           (If (Application [Primitive le, Sym "i", Nm 10]) (
@@ -36,7 +36,7 @@ main = do
           )
       )
       )
-    code2 = Application [Sym "sum-to-10", Nm 0, Nm 0]
+    code2 = parse "(sum-to-10 0 0)"
 --    (_, env1) = eval defPlus globalEnv
 --    (_, env2) = eval defMinus env1
     (_, env) = eval defSumTo10 globalEnv
