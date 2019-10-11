@@ -35,13 +35,15 @@ instance Show Exp where
 
 showExp :: Exp -> String
 showExp (Nm n) = "Number " ++ show n
-showExp (Lambda _ _) = "Lambda"
+showExp (Lambda args body) =
+  "Lambda [" ++ unwords (map show args) ++ "] " ++ show body
 showExp (Def _ _) = "Def"
 showExp (Application exps) = "Appplication [" ++ unwords (map show exps) ++ "]"
 showExp (Primitive _) = "primitive"
 showExp (Sym name) = "Sym \"" ++ name ++ "\""
 showExp (Boolean b) = show b
 showExp (Error message) = "Error: " ++ message
+showExp (If pred cons alter) = "If " ++ show pred ++ " " ++ show cons ++ " " ++ show alter
 showExp Unit = "unit"
 
 lookupValue :: String -> Env -> Exp
