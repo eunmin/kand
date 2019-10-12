@@ -39,6 +39,9 @@ parseAST :: AST -> Exp
 parseAST (TokenList (Token "if":pred:cons:alter:[])) =
   If (parseAST pred) (parseAST cons) (parseAST alter)
 
+parseAST (TokenList (Token "def":name:body:[])) =
+  Def (parseAST name) (parseAST body)
+
 parseAST (TokenList (Token "fn":TokenList args:body:[])) =
   Lambda (map parseAST args) (parseAST body)
          

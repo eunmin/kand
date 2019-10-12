@@ -37,7 +37,7 @@ showExp :: Exp -> String
 showExp (Nm n) = "Number " ++ show n
 showExp (Lambda args body) =
   "Lambda [" ++ unwords (map show args) ++ "] " ++ show body
-showExp (Def _ _) = "Def"
+showExp (Def name body) = "Def " ++ show name ++ " " ++ show body
 showExp (Application exps) = "Appplication [" ++ unwords (map show exps) ++ "]"
 showExp (Primitive _) = "primitive"
 showExp (Sym name) = "Sym \"" ++ name ++ "\""

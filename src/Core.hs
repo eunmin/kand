@@ -1,11 +1,6 @@
-module Core ( plus
-            , minus
-            , lt
-            , le 
-            , gt
-            , ge
-            , eq ) where
+module Core ( coreEnv ) where
 
+import qualified Data.Map as Map
 import Type
 
 plus :: [Exp] -> Exp
@@ -31,3 +26,13 @@ ge ((Nm x):(Nm y):[]) = Boolean (x >= y)
 eq :: [Exp] -> Exp
 eq ((Nm x):(Nm y):[]) = Boolean (x == y)
 
+coreEnv :: Env
+coreEnv = Env (Map.fromList
+               [ ("<", Primitive lt)
+               , ("<=", Primitive le)
+               , (">", Primitive gt)
+               , (">=", Primitive ge)
+               , ("==", Primitive eq)
+               , ("+", Primitive plus)
+               , ("-", Primitive minus)
+               ]) EmptyEnv
