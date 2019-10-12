@@ -1,6 +1,6 @@
 # Kand
 
-This is experimental project. :)
+This is experimental project. Don't use it for product. :)
  
 ## Usage
 
