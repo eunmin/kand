@@ -44,7 +44,7 @@ showExp (Sym name) = "Sym \"" ++ name ++ "\""
 showExp (Boolean b) = show b
 showExp (Error message) = "Error: " ++ message
 showExp (If pred cons alter) = "If " ++ show pred ++ " " ++ show cons ++ " " ++ show alter
-showExp Unit = "unit"
+showExp Unit = "Unit"
 
 lookupValue :: String -> Env -> Exp
 lookupValue var (Env frame parent) =

@@ -1,5 +1,33 @@
 # Kand
 
+## Usage
+
+You can run repl with [Stack](https://docs.haskellstack.org/en/stable/README/) `stack run` or [Etlas](https://eta-lang.org/docs/user-guides/etlas-user-guide) `etlas run`
+
+```
+Kand REPL
+To exit type quit
+> (def a 10)
+Unit
+> (def b 2000)
+Unit
+> (+ a b)
+Number 2010.0
+> (def add (fn (x y) (+ x y)))
+Unit
+> (add a b)
+Number 2010.0
+> (if (> 1 2) 1 2)
+Number 2.0
+> (if (== 1 1) 1 2)
+Number 1.0
+> (if (== 11 1) 1 2)
+Number 2.0
+> quit  
+Bye See you soon!
+```
+
+
 ## References
 
 ### JVM Languages
