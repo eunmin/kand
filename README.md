@@ -1,5 +1,7 @@
 # Kand
 
+This is experimental project. :)
+ 
 ## Usage
 
 You can run repl with [Stack](https://docs.haskellstack.org/en/stable/README/) `stack run` or [Etlas](https://eta-lang.org/docs/user-guides/etlas-user-guide) `etlas run`
