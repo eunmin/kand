@@ -4,56 +4,62 @@ import Text.Read
 import Type
 import Data.Char
 
-data TokenBuffer = TokenBuffer String | TokenNotReady | EmptyToken
 
-data AST = Token String | TokenList [AST] | EmptyAST deriving Show
+data TokenList = Token String
+               | TokenList [TokenList]
+               | EmptyTokenList deriving Show
 
-instance Semigroup AST where
+
+instance Semigroup TokenList where
   TokenList x <> TokenList y = TokenList (x ++ y)
-  TokenList x <> EmptyAST = TokenList x
-  EmptyAST <> TokenList x = TokenList x
+  TokenList x <> EmptyTokenList = TokenList x
+  EmptyTokenList <> TokenList x = TokenList x
+  EmptyTokenList <> EmptyTokenList  = EmptyTokenList
 
-parseList :: String -> TokenBuffer -> AST -> (AST, String)
- 
-parseList (x:xs) TokenNotReady result
-  | x == '(' = parseList xs EmptyToken result
-  | otherwise = parseList xs TokenNotReady result
 
-parseList (x:xs) (TokenBuffer s) result
-  | x == '(' = let (ast, rest) = parseList (x:xs) TokenNotReady EmptyAST in
-      parseList rest EmptyToken (result <> TokenList [Token s, ast])
-  | x == ')' = (result <> TokenList [Token s], xs)
-  | isSpace x = parseList xs EmptyToken (result <> TokenList [Token s])
-  | otherwise = parseList xs (TokenBuffer (s ++ [x])) result
+stringToken :: String -> TokenList
+
+stringToken "" = EmptyTokenList
+
+stringToken s = TokenList [Token s]
+
+
+tokenize :: String -> String -> TokenList -> (TokenList, String)
+
+tokenize (x:xs) buffer result
+  | x == '(' = let (ast, rest) = tokenize xs "" EmptyTokenList
+               in tokenize rest "" (result <> TokenList [ast])
+  | x == ')' = ((result <> stringToken buffer), xs)                
+  | isSpace x = tokenize xs "" (result <> stringToken buffer)
+  | otherwise = tokenize xs (buffer ++ [x]) result
   
-parseList (x:xs) EmptyToken result
-  | x == '(' = let (ast, rest) = parseList (x:xs) TokenNotReady EmptyAST in
-      parseList rest EmptyToken (result <> TokenList [ast])
-  | x == ')' = (result, xs)
-  | isSpace x = parseList xs EmptyToken result
-  | otherwise = parseList xs (TokenBuffer [x]) result
+tokenize "" buffer result = ((result <> stringToken buffer), "")
 
 
-parseAST :: AST -> Exp
+parseTokenList :: TokenList -> Exp
 
-parseAST (TokenList (Token "if":pred:cons:alter:[])) =
-  If (parseAST pred) (parseAST cons) (parseAST alter)
+parseTokenList (TokenList (Token "if":pred:cons:alter:[])) =
+  If (parseTokenList pred) (parseTokenList cons) (parseTokenList alter)
 
-parseAST (TokenList (Token "def":name:body:[])) =
-  Def (parseAST name) (parseAST body)
+parseTokenList (TokenList (Token "def":name:body:[])) =
+  Def (parseTokenList name) (parseTokenList body)
 
-parseAST (TokenList (Token "fn":TokenList args:body:[])) =
-  Lambda (map parseAST args) (parseAST body)
+parseTokenList (TokenList (Token "fn":TokenList args:body:[])) =
+  Lambda (map parseTokenList args) (parseTokenList body)
          
-parseAST (TokenList xs) = Application $ map parseAST xs
+parseTokenList (TokenList xs) = Application $ map parseTokenList xs
 
-parseAST (Token s) =
+parseTokenList (Token s) =
   case (readMaybe s :: Maybe Double) of
     Just n -> Nm n
     Nothing -> Sym s
 
-parse :: String -> Exp
-parse s = parseAST $ (fst $ parseList s TokenNotReady EmptyAST)
 
-  
+parseRootTokenList :: TokenList -> [Exp]
+parseRootTokenList (TokenList tokens) = map parseTokenList tokens
 
+parseRootTokenList EmptyTokenList = []
+
+
+parse :: String -> [Exp]
+parse s = parseRootTokenList $ (fst $ tokenize s "" EmptyTokenList)
