@@ -29,6 +29,13 @@ Number 2.0
 Bye See you soon!
 ```
 
+## Build
+
+```
+./gradlew shadowJar
+
+java -jar ./build/libs/kand.jar
+```
 
 ## References
 
