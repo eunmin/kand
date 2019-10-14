@@ -18,6 +18,10 @@ sourceSets {
   }
 }
 
+repositories {
+  mavenCentral()
+}
+
 run {
   standardInput = System.in
 }
@@ -25,4 +29,6 @@ run {
 dependencies {
   compile eta('base:4.11.1.0')
   compile eta('containers:0.5.11.0')
+  implementation 'org.ow2.asm:asm:7.0'
+  implementation 'org.ow2.asm:asm-util:7.0'
 }
