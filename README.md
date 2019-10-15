@@ -32,9 +32,9 @@ Bye See you soon!
 ## Build
 
 ```
-./gradlew shadowJar
+etlas build --enable-uberjar-mode
 
-java -jar ./build/libs/kand.jar
+java -jar ./dist/build/eta-0.8.6.5/kand-0.1.0.0/x/kand/build/kand/kand.jar
 ```
 
 ## References
