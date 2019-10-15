@@ -4,7 +4,7 @@ This is experimental project. Don't use it for product. :)
  
 ## Usage
 
-You can run repl with [Stack](https://docs.haskellstack.org/en/stable/README/) `stack run` or [Etlas](https://eta-lang.org/docs/user-guides/etlas-user-guide) `etlas run`
+You can run repl with [Etlas](https://eta-lang.org/docs/user-guides/etlas-user-guide) `etlas run`
 
 ```
 Kand REPL
@@ -25,7 +25,7 @@ Number 2.0
 Number 1.0
 > (if (== 11 1) 1 2)
 Number 2.0
-> quit  
+> :quit
 Bye See you soon!
 ```
 
