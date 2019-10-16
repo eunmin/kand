@@ -17,7 +17,13 @@ cabal-version:       >=1.10
 
 executable kand
   main-is:             Main.hs
-  other-modules:       Type, Core, Analyzer, Parser, Asm.ClassWriter, Asm.MethodVisitor
+  other-modules:       Type
+                     , Core
+                     , Analyzer
+                     , Parser
+                     , Asm.ClassWriter
+                     , Asm.MethodVisitor
+                     , Compiler
   -- other-extensions:    
   build-depends:       base >=4.11 && <4.12
                      , containers >=0.5 && <0.6
@@ -25,5 +31,5 @@ executable kand
   hs-source-dirs:      src
   default-language:    Haskell2010
   maven-depends:       org.ow2.asm:asm:7.0, org.ow2.asm:asm-util:7.0
-                
+  java-sources:        kand-runtime/src/main/java/kand/runtime/Fn.java
 
