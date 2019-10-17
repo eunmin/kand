@@ -31,11 +31,32 @@ writePrintlnClass text = do
 
   cw <.> toByteArray
 
+toJStringArray :: [String] -> JStringArray
+toJStringArray strs = toJava jstrings
+  where jstrings = map toJava strs :: [JString]
+  
+writeClass :: Java c JByteArray
+writeClass = do
+  cw <- newClassWriter 0
+  cw <.> visit 49 (1 + 32) "AddFn" Nothing "java/lang/Object" (Just (toJStringArray ["kand/runtime/Fn"]))
+  cw <.> visitSource "AddFn.java" Nothing
+
+  mw <- cw <.> visitMethod 1 "invoke" "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" Nothing Nothing
+--  mw <.> visitFieldInsn 178 "/lang/System" "out" "Ljava/io/PrintStream;"
+--  mw <.> visitLdcInsn (toJString "")
+--  mw <.> visitMethodInsn 182 "kand/runtime/Core" "add" "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" False
+  mw <.> visitInsn 177
+  mw <.> visitMaxs (-1) (-1)
+  mw <.> MV.visitEnd
+
+  cw <.> CW.visitEnd
+  cw <.> toByteArray
+
 compile :: [String] -> IO ()
 compile (filename:[]) = do
-  contents <- readFile filename
-  putStrLn $ show (parse contents)
-  byteCode <- java (writePrintlnClass "Hello World")
-  BS.writeFile "Hello.class" (BS.pack (fromJava byteCode))
+--  contents <- readFile filename
+--  putStrLn $ show (parse contents)
+  byteCode <- java writeClass
+  BS.writeFile "AddFn.class" (BS.pack (fromJava byteCode))
   return ()
   
