@@ -44,9 +44,12 @@ writeClass = do
   mw <- cw <.> visitMethod 1 "invoke" "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" Nothing Nothing
 --  mw <.> visitFieldInsn 178 "/lang/System" "out" "Ljava/io/PrintStream;"
 --  mw <.> visitLdcInsn (toJString "")
---  mw <.> visitMethodInsn 182 "kand/runtime/Core" "add" "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" False
-  mw <.> visitInsn 177
-  mw <.> visitMaxs (-1) (-1)
+
+  mw <.> visitVarInsn 25 1
+  mw <.> visitVarInsn 25 2
+  mw <.> visitMethodInsn 184 "kand/runtime/Core" "add" "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;" False
+  mw <.> visitInsn 176
+  mw <.> visitMaxs 1 (-1)
   mw <.> MV.visitEnd
 
   cw <.> CW.visitEnd

@@ -30,5 +30,3 @@ foreign import java unsafe visitLdcInsn :: (a <: Object) => a -> Java MethodVisi
 
 
 
-
-
