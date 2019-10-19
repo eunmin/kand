@@ -12,5 +12,7 @@ repositories {
 }
 
 dependencies {
+    compile 'org.ow2.asm:asm:7.0'
+    compile 'org.ow2.asm:asm-util:7.0'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
