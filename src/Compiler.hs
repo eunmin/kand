@@ -12,7 +12,7 @@ toJStringArray strs = toJava jstrings
   
 compile :: [String] -> IO ()
 compile (filename:[]) = do
-  BS.writeFile "example/add.class" (BS.pack (fromJava $ FnClass.write "example/add"))
+  BS.writeFile "example/add.class" (BS.pack (fromJava $ FnClass.write "example/add" (toJStringArray ["x", "y"])))
   BS.writeFile "example/main.class" (BS.pack (fromJava $ MainClass.write "example/main"))
   return ()
   

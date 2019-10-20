@@ -6,4 +6,4 @@ import Java
 
 data FnClassWriter = FnClassWriter @kand.asm.FnClassWriter deriving Class
 
-foreign import java unsafe "@static kand.asm.FnClassWriter.write" write :: String -> JByteArray
+foreign import java unsafe "@static kand.asm.FnClassWriter.write" write :: String -> JStringArray -> JByteArray

@@ -1,6 +1,9 @@
 package kand.asm;
 
 import org.objectweb.asm.*;
+
+import java.util.List;
+
 import static org.objectweb.asm.Opcodes.*;
 
 public class FnClassWriter {
@@ -22,7 +25,7 @@ public class FnClassWriter {
         mv.visitEnd();
     }
 
-    public static byte[] write(String name) {
+    public static byte[] write(String name, String[] args) {
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
@@ -37,16 +40,31 @@ public class FnClassWriter {
             Label label0 = new Label();
             mv.visitLabel(label0);
             mv.visitLineNumber(8, label0);
+
+            // return Core.add(Core.add(Core.add(123 o2), o2), Core.add(o1,o2));
+//            mv.visitIntInsn(BIPUSH, 123);
+//            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
+//            mv.visitVarInsn(ALOAD, 2);
+//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+//
+//            mv.visitVarInsn(ALOAD, 2);
+//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+
             mv.visitVarInsn(ALOAD, 1);
             mv.visitVarInsn(ALOAD, 2);
+//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+
             mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+
             mv.visitInsn(ARETURN);
+
             Label label1 = new Label();
             mv.visitLabel(label1);
             mv.visitLocalVariable("this", "Lexample/add;", null, label0, label1, 0);
-            mv.visitLocalVariable("o1", "Ljava/lang/Object;", null, label0, label1, 1);
-            mv.visitLocalVariable("o2", "Ljava/lang/Object;", null, label0, label1, 2);
-            mv.visitMaxs(2, 3);
+            for (int i = 0; i < args.length; i++) {
+                mv.visitLocalVariable(args[i], "Ljava/lang/Object;", null, label0, label1, i + 1);
+            }
+            mv.visitMaxs(2, args.length + 1);
             mv.visitEnd();
         }
         cw.visitEnd();
