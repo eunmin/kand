@@ -34,5 +34,8 @@ executable kand
                      , org.ow2.asm:asm-util:7.0
   java-sources:        jvm/src/main/java/kand/asm/FnClassWriter.java
                      , jvm/src/main/java/kand/asm/MainClassWriter.java
+                     , jvm/src/main/java/kand/asm/Exp.java
+                     , jvm/src/main/java/kand/asm/Method.java
+                     , jvm/src/main/java/kand/asm/Var.java
                      , jvm/src/main/java/kand/asm/Util.java
 

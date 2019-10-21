@@ -14,11 +14,6 @@ public class Compiler {
     }
 
     public static void main(String[] args) throws IOException {
-
-//        FnClassWriter fw = new FnClassWriter("example/add", 2);
-//        fw.body()
-//        fw.write();
-
         writeFile("example/add.class", FnClassWriter.write("example/add", new String[] {"x", "y"}));
         writeFile("example/main.class", MainClassWriter.write("example/main"));
     }
