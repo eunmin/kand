@@ -36,14 +36,14 @@ public class MainClassWriter {
             methodVisitor.visitTypeInsn(NEW, "example/add");
             methodVisitor.visitInsn(DUP);
             methodVisitor.visitMethodInsn(INVOKESPECIAL, "example/add", "<init>", "()V", false);
-            methodVisitor.visitTypeInsn(NEW, "java/lang/Integer");
+            methodVisitor.visitTypeInsn(NEW, "java/lang/Double");
             methodVisitor.visitInsn(DUP);
-            methodVisitor.visitInsn(ICONST_1);
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(I)V", false);
-            methodVisitor.visitTypeInsn(NEW, "java/lang/Integer");
+            methodVisitor.visitLdcInsn(new Double("2.0"));
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Double", "<init>", "(D)V", false);
+            methodVisitor.visitTypeInsn(NEW, "java/lang/Double");
             methodVisitor.visitInsn(DUP);
-            methodVisitor.visitInsn(ICONST_2);
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Integer", "<init>", "(I)V", false);
+            methodVisitor.visitLdcInsn(new Double("3.0"));
+            methodVisitor.visitMethodInsn(INVOKESPECIAL, "java/lang/Double", "<init>", "(D)V", false);
             methodVisitor.visitMethodInsn(INVOKEVIRTUAL, "example/add", "invoke", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
             methodVisitor.visitVarInsn(ASTORE, 1);
             Label label1 = new Label();
@@ -60,7 +60,7 @@ public class MainClassWriter {
             methodVisitor.visitLabel(label3);
             methodVisitor.visitLocalVariable("args", "[Ljava/lang/String;", null, label0, label3, 0);
             methodVisitor.visitLocalVariable("result", "Ljava/lang/Object;", null, label1, label3, 1);
-            methodVisitor.visitMaxs(5, 2);
+            methodVisitor.visitMaxs(6, 2);
             methodVisitor.visitEnd();
         }
         classWriter.visitEnd();

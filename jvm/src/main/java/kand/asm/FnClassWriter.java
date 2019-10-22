@@ -22,7 +22,7 @@ public class FnClassWriter {
         mv.visitEnd();
     }
 
-    public static byte[] write(String name, String[] args) {
+    public static byte[] write(String name, String[] args, Exp exp) {
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
@@ -38,24 +38,7 @@ public class FnClassWriter {
             mv.visitLabel(label0);
             mv.visitLineNumber(8, label0);
 
-            Method method = new Method("kand/runtime/Core", "add",
-                    new Exp[] { new Var(1), new Var(2)});
-
-            method.visit(mv);
-            // return Core.add(Core.add(Core.add(123 o2), o2), Core.add(o1,o2));
-//            mv.visitIntInsn(BIPUSH, 123);
-//            mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;", false);
-//            mv.visitVarInsn(ALOAD, 2);
-//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
-//
-//            mv.visitVarInsn(ALOAD, 2);
-//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
-
-//            mv.visitVarInsn(ALOAD, 1);
-//            mv.visitVarInsn(ALOAD, 2);
-//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
-
-//            mv.visitMethodInsn(INVOKESTATIC, "kand/runtime/Core", "add", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;", false);
+            exp.visit(mv);
 
             mv.visitInsn(ARETURN);
 
@@ -65,7 +48,7 @@ public class FnClassWriter {
             for (int i = 0; i < args.length; i++) {
                 mv.visitLocalVariable(args[i], "Ljava/lang/Object;", null, label0, label1, i + 1);
             }
-            mv.visitMaxs(2, args.length + 1);
+            mv.visitMaxs(3, args.length + 1);
             mv.visitEnd();
         }
         cw.visitEnd();

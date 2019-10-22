@@ -23,6 +23,10 @@ executable kand
                      , Parser
                      , Asm.FnClassWriter
                      , Asm.MainClassWriter
+                     , Asm.AsmExp
+                     , Asm.AsmMethod
+                     , Asm.AsmNm
+                     , Asm.AsmVar
                      , Compiler
   -- other-extensions:    
   build-depends:       base >=4.11 && <4.12
@@ -37,5 +41,6 @@ executable kand
                      , jvm/src/main/java/kand/asm/Exp.java
                      , jvm/src/main/java/kand/asm/Method.java
                      , jvm/src/main/java/kand/asm/Var.java
+                     , jvm/src/main/java/kand/asm/Nm.java
                      , jvm/src/main/java/kand/asm/Util.java
 
