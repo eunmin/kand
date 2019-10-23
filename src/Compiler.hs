@@ -3,6 +3,9 @@ module Compiler ( compile ) where
 import qualified Data.ByteString as BS
 import Asm.FnClassWriter as FnClass
 import Asm.MainClassWriter as MainClass
+import Asm.AsmMethod
+import Asm.AsmVar
+import Asm.AsmNm
 import Parser
 import Java
 
@@ -12,7 +15,15 @@ toJStringArray strs = toJava jstrings
   
 compile :: [String] -> IO ()
 compile (filename:[]) = do
-  BS.writeFile "example/add.class" (BS.pack (fromJava $ FnClass.write "example/add" (toJStringArray ["x", "y"])))
+  code <- byteArray
+  BS.writeFile "example/add.class" (BS.pack (fromJava code))
   BS.writeFile "example/main.class" (BS.pack (fromJava $ MainClass.write "example/main"))
   return ()
+  where
+    byteArray = java $ do
+      var1 <- newAsmVar 1
+      var2 <- newAsmVar 2
+      args <- arrayFromList [var1, var2]
+      exp <- newAsmMethod "kand/runtime/Core" "add" args
+      return $ FnClass.write "example/add" (toJStringArray ["x", "y"]) exp
   

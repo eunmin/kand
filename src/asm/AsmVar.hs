@@ -9,4 +9,4 @@ data AsmVar = AsmVar @kand.asm.Var deriving Class
 
 type instance Inherits AsmVar = '[AsmExp]
 
-foreign import java unsafe "@new" newAsmVar :: Int -> Java a AsmVar
+foreign import java unsafe "@new" newAsmVar :: (b <: AsmExp) => Int -> Java a b
