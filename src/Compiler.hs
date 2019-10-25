@@ -1,13 +1,18 @@
+{-# LANGUAGE TypeFamilies, DataKinds, ScopedTypeVariables #-}
+
 module Compiler ( compile ) where
 
 import qualified Data.ByteString as BS
 import Asm.FnClassWriter as FnClass
 import Asm.MainClassWriter as MainClass
+import Asm.AsmExp
 import Asm.AsmMethod
 import Asm.AsmVar
 import Asm.AsmNm
 import Parser
 import Java
+
+type instance Inherits AsmVarArray = '[AsmExpArray]
 
 toJStringArray :: [String] -> JStringArray
 toJStringArray strs = toJava jstrings

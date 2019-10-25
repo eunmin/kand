@@ -4,6 +4,7 @@ module Asm.AsmMethod ( newAsmMethod ) where
 
 import Java
 import Asm.AsmExp
+import Asm.AsmVar
 
 data AsmMethod = AsmMethod @kand.asm.Method deriving Class
 
