@@ -67,3 +67,7 @@ java -jar ./dist/build/eta-0.8.6.5/kand-0.1.0.0/x/kand/build/kand/kand.jar
 ### Libraries
 
 - [ASM](https://asm.ow2.io)
+
+### Tools
+
+- [ASM Bytecode Viewer](https://plugins.jetbrains.com/plugin/10302-asm-bytecode-viewer)
