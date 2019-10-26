@@ -1,6 +1,6 @@
 (ns kand.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+(defn plus [x y]
+  (+ (:val x) (:val y)))
+
+(def core-env {"+" plus})
