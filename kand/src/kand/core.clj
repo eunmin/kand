@@ -1,6 +1,7 @@
-(ns kand.core)
+(ns kand.core
+  (:require [kand.type :refer :all]))
 
 (defn plus [x y]
   (+ (:val x) (:val y)))
 
-(def core-env {"+" plus})
+(def core-env {"+" (->Primitive plus)})

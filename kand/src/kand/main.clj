@@ -10,7 +10,6 @@
   ((analyze exp) env))
 
 (defn repl [env]
-  (println env)
   (print "> ")
   (flush)
   (let [line (read-line)

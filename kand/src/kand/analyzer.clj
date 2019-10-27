@@ -12,7 +12,7 @@
     (bproc (merge env (zipmap (map :name params) args)))))
 
 (defmethod execute Primitive [{:keys [f]} args env]
-  [(f args) env])
+  [(apply f args) env])
 
 (defmethod execute :default [_ _ env]
   [(->Unit) env])
