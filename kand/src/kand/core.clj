@@ -2,25 +2,25 @@
   (:require [kand.type :refer :all]))
 
 (defn plus [{x :val} {y :val}]
-  (+ x y))
+  (->Num (+ x y)))
 
 (defn minus [{x :val} {y :val}]
-  (- x y))
+  (->Num (- x y)))
 
 (defn gt [{x :val} {y :val}]
-  (> x y))
+  (if (> x y) (->True) (->False)))
 
 (defn lt [{x :val} {y :val}]
-  (< x y))
+  (if (< x y) (->True) (->False)))
 
 (defn ge [{x :val} {y :val}]
-  (>= x y))
+  (if (>= x y) (->True) (->False)))
 
 (defn le [{x :val} {y :val}]
-  (<= x y))
+  (if (<= x y) (->True) (->False)))
 
 (defn eq [{x :val} {y :val}]
-  (= x y))
+  (if (= x y) (->True) (->False)))
 
 (def core-env {"+" (->Primitive plus)
                "-" (->Primitive minus)
