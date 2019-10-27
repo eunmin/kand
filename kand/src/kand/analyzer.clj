@@ -1,21 +1,22 @@
 (ns kand.analyzer
   (:refer-clojure :exclude [name])
   (:require [kand.type :refer :all])
-  (:import [kand.type Application If Def Lambda Primitive Symbol Num Unit]))
+  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Err]))
 
 (defmulti analyze type)
 
 (defmulti execute (fn [v _ _] (type v)))
 
 (defmethod execute Lambda [{:keys [params body]} args env]
-  (let [bproc (analyze body)]
-    (bproc (merge env (zipmap (map :name params) args)))))
+  (let [bproc (analyze body)
+        [result _] (bproc (merge env (zipmap (map :name params) args)))]
+    [result env]))
 
 (defmethod execute Primitive [{:keys [f]} args env]
   [(apply f args) env])
 
-(defmethod execute :default [_ _ env]
-  [(->Unit) env])
+(defmethod execute :default [v _ env]
+  [(->Err (str v " can't execute")) env])
 
 (defmethod analyze Application [{:keys [exps]}]
   (let [[operator & operands] exps
@@ -36,7 +37,7 @@
         tproc (analyze t)
         fproc (analyze f)]
     #(let [[p] (pproc %)]
-       (if p
+       (if (= (->True) p)
          (tproc %)
          (fproc %)))))
 

@@ -15,7 +15,7 @@
 (defmethod tokenize :default [[x & xs :as s] buf result]
   (cond
     (= \( x) (let [[ast rst] (tokenize xs "" [])]
-               (tokenize rst "" (append-token result ast)))
+               (tokenize rst "" (append-token (append-token result buf) ast)))
     (= \) x) [(append-token result buf) xs]
     (blank? (str x)) (tokenize xs "" (append-token result buf))
     :else (tokenize xs (str buf x) result)))
@@ -37,12 +37,11 @@
 (defmethod parse-token :default [token]
   (cond
     (vector? token) (->Application (map parse-token token))
+    (= "true" token) (->True)
+    (= "false" token) (->False)
     (number? (read-string token)) (->Num (read-string token))
     :else (->Symbol token)))
 
 (defn parse [s]
   (let [[tokens] (tokenize s "" [])]
     (map parse-token tokens)))
-
-(parse "(def add (fn (x y) 
-                   (+ x y)))")
