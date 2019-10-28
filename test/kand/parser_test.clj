@@ -1,7 +1,8 @@
 (ns kand.parser-test
-  (:require [kand.parser :refer :all]
-            [kand.type :refer :all]
-            [clojure.test :refer :all]))
+  (:require [clojure.test :refer :all]
+            [kand.parser :refer :all]
+            [kand.type :refer :all])
+  (:import kand.type.Err))
 
 (deftest append-token-test []
   (testing "append-token"
@@ -50,10 +51,20 @@
         result (parse-token s)]
     (is (= (->If (->Symbol "a") (->Symbol "b") (->Symbol "c")) result))))
 
+(deftest parse-token-if-error []
+  (let [s ["if" "a" "b" "c" "d"]
+        result (parse-token s)]
+    (is (instance? Err result))))
+
 (deftest parse-token-def []
   (let [s ["def" "a" "1"]
         result (parse-token s)]
     (is (= (->Def (->Symbol "a") (->Num 1)) result))))
+
+(deftest parse-token-def-error []
+  (let [s ["def" "a" "1" "2"]
+        result (parse-token s)]
+    (is (instance? Err result))))
 
 (deftest parse-token-fn []
   (testing "No parameters"
@@ -67,6 +78,16 @@
                        (->Application [(->Symbol "+")
                                        (->Symbol "x")
                                        (->Symbol "y")])))))))
+
+(deftest parse-token-fn-error []
+  (testing "Too many args"
+    (let [s ["fn" [] "1" "2"]
+          result (parse-token s)]
+      (is (instance? Err result))))
+  (testing "Non vector parameters"
+    (let [s ["fn" "a" "1" "2"]
+          result (parse-token s)]
+      (is (instance? Err result)))))
 
 (deftest parse-token-vector []
   (let [s ["+" "1" "2"]

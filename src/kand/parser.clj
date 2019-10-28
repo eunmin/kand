@@ -25,14 +25,21 @@
                           (keyword (first token)))))
 
 (defmethod parse-token :if [[_ pred t f & rst]]
-  ;; check! rst must nil!!
-  (->If (parse-token pred) (parse-token t) (parse-token f)))
+  (if rst
+    (->Err "Too many arguments to if")
+    (->If (parse-token pred) (parse-token t) (parse-token f))))
 
-(defmethod parse-token :def [[_ sym body]]
-  (->Def (parse-token sym) (parse-token body)))
+(defmethod parse-token :def [[_ sym body & rst]]
+  (if rst
+    (->Err "Too many arguments to def")
+    (->Def (parse-token sym) (parse-token body))))
 
-(defmethod parse-token :fn [[_ args body]]
-  (->Lambda (map parse-token args) (parse-token body)))
+(defmethod parse-token :fn [[_ args body & rst]]
+  (if rst
+    (->Err "Too many arguments to fn")
+    (if (vector? args)
+      (->Lambda (map parse-token args) (parse-token body))
+      (->Err "Parameter declaration should be a vector"))))
 
 (defmethod parse-token :default [token]
   (cond
