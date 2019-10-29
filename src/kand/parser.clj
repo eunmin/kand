@@ -29,10 +29,15 @@
     (->Err "Too many arguments to if")
     (->If (parse-token pred) (parse-token t) (parse-token f))))
 
-(defmethod parse-token :def [[_ sym body & rst]]
+
+(defmethod parse-token :def [[_ def-name body & rst]]
   (if rst
     (->Err "Too many arguments to def")
-    (->Def (parse-token sym) (parse-token body))))
+    (if (vector? def-name)
+      (let [[sym & args] def-name]
+        (->Def (parse-token sym)
+               (parse-token ["fn" (vec args) body])))
+      (->Def (parse-token def-name) (parse-token body)))))
 
 (defmethod parse-token :fn [[_ args body & rst]]
   (if rst

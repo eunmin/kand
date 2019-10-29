@@ -61,8 +61,14 @@
         result (parse-token s)]
     (is (= (->Def (->Symbol "a") (->Num 1)) result))))
 
+(deftest parse-token-def-function []
+  (let [s ["def" ["a" "x"] "x"]
+        result (parse-token s)]
+    (is (= (->Def (->Symbol "a") (->Lambda [(->Symbol "x")]
+                                           (->Symbol "x"))) result))))
+
 (deftest parse-token-def-error []
-  (let [s ["def" "a" "1" "2"]
+  (let [s ["def" "a" "1" "2" "3"]
         result (parse-token s)]
     (is (instance? Err result))))
 
