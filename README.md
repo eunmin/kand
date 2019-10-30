@@ -4,7 +4,7 @@ This is experimental project. Don't use it for product. :)
  
 ## Usage
 
-You can run repl with [Etlas](https://eta-lang.org/docs/user-guides/etlas-user-guide) `etlas run`
+You can run repl with [Leiningen](https://leiningen.org) `lein run`
 
 ```
 Kand REPL
@@ -32,9 +32,9 @@ Bye See you soon!
 ## Build
 
 ```
-etlas build --enable-uberjar-mode
+lein ubarjar
 
-java -jar ./dist/build/eta-0.8.6.5/kand-0.1.0.0/x/kand/build/kand/kand.jar
+java -jar target/kand-0.1.0-SNAPSHOT-standalone.jar
 ```
 
 ## References
