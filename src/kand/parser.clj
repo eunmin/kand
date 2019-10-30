@@ -12,11 +12,18 @@
 (defmethod tokenize nil [_ buf result]
   [(append-token result buf) ""])
 
-(defmethod tokenize :default [[x & xs :as s] buf result]
+(defn tokenize-string [[x & xs] buf result]
+  (if (= \" x)
+    [(str buf x) xs]
+    (tokenize-string xs (str buf x) result)))
+
+(defmethod tokenize :default [[x & xs] buf result]
   (cond
     (= \( x) (let [[ast rst] (tokenize xs "" [])]
                (tokenize rst "" (append-token (append-token result buf) ast)))
     (= \) x) [(append-token result buf) xs]
+    (= \" x) (let [[s rst] (tokenize-string xs (str x) result)]
+               (tokenize rst "" (append-token (append-token result buf) s)))
     (blank? (str x)) (tokenize xs "" (append-token result buf))
     :else (tokenize xs (str buf x) result)))
 
@@ -51,6 +58,7 @@
     (vector? token) (->Application (map parse-token token))
     (= "true" token) (->True)
     (= "false" token) (->False)
+    (string? (read-string token)) (->Str (read-string token))
     (number? (read-string token)) (->Num (read-string token))
     :else (->Symbol token)))
 

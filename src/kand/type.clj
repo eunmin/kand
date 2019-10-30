@@ -7,6 +7,7 @@
 (defrecord Primitive [f])
 (defrecord Symbol [name])
 (defrecord Num [val])
+(defrecord Str [val])
 (defrecord True [])
 (defrecord False [])
 (defrecord Unit [])

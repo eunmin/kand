@@ -44,7 +44,11 @@
   (testing "Empty parentheses"
     (let [s "()"
           [result _] (tokenize s "" [])]
-      (is (= [[]] result)))))
+      (is (= [[]] result))))
+  (testing "String"
+    (let [s "\"a b c\""
+          [result _] (tokenize s "" [])]
+      (is (= ["\"a b c\""] result)))))
 
 (deftest parse-token-if []
   (let [s ["if" "a" "b" "c"]
