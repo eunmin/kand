@@ -7,4 +7,5 @@
                  [org.ow2.asm/asm "7.0"]
                  [org.ow2.asm/asm-util "7.0"]]
   :repl-options {:init-ns kand.main}
+  :profiles {:uberjar {:aot :all}}
   :main kand.main)
