@@ -13,8 +13,24 @@
 (defrecord Unit [])
 (defrecord Err [message])
 
-#_(
+#_( java interop
 
+   ;; method
+   (.split (String "a"))
+
+   ;; constructor
+   (Int 1)
+
+   ;; static field
+   Int/MAX_VALUE
+
+   ;; static method
+   (Thread/currentThread)
+
+   )
+
+#_( type system
+   
    (:: value Int)
    (def value 1)
 
@@ -40,8 +56,8 @@
 
    ;; product type
    (defrecord Person
-     (:: first-name String)
-     (:: last-name String))
+     (first-name String)
+     (last-name String))
 
    ;; sum type
    (defdata Profession
@@ -52,7 +68,8 @@
      (return (a (m a))))
 
    (defclass ((Eq a)) (Num a)
-     ((+ -) (a a a))
+     (+ (a a a))
+     (- (a a a))
      (negate (a a)))
 
    )
