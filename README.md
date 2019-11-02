@@ -10,21 +10,23 @@ You can run repl with [Leiningen](https://leiningen.org) `lein run`
 Kand REPL
 To exit type quit
 > (def a 10)
-Unit
+#kand.type.Unit{}
 > (def b 2000)
-Unit
+#kand.type.Unit{}
 > (+ a b)
-Number 2010.0
+#kand.type.Num{:val 2010}
 > (def add (fn (x y) (+ x y)))
-Unit
+#kand.type.Unit{}
 > (add a b)
-Number 2010.0
+#kand.type.Num{:val 2010}
 > (if (> 1 2) 1 2)
-Number 2.0
-> (if (== 1 1) 1 2)
-Number 1.0
-> (if (== 11 1) 1 2)
-Number 2.0
+#kand.type.Num{:val 2}
+> (if (= 1 1) 1 2)                             
+#kand.type.Num{:val 1}
+> (if (= 1 2) 1 2)
+#kand.type.Num{:val 2}
+> (. (quote nextInt) (new (quote java.util.Random)))
+#kand.type.Obj{:obj -1034235661}
 > :quit
 Bye See you soon!
 ```
