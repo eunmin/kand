@@ -33,12 +33,14 @@
 (defmethod analyze Symbol [{:keys [name]}]
   (fn analyze-symbol [env]
     (if-let [value (get env name)]
-      (vector value env)
-      (vector (->Err (str "Can't find symbol " name)) env))))
+      [value env]
+      [(->Err (str "Can't find symbol " name)) env])))
 
 (defmethod analyze Def [{:keys [name body]}]
-  (fn analyze-def [env]
-    (vector (->Unit) (assoc env (:name name) body))))
+  (let [bodyf (analyze body)]
+    (fn analyze-def [env]
+      (let [[result env] (bodyf env)]
+        [(->Unit) (assoc env (:name name) result)]))))
 
 (defmethod analyze If [{:keys [pred t f]}]
   (let [pproc (analyze pred)
@@ -52,10 +54,10 @@
 
 (defmethod analyze Quote [value]
   (fn analyze-quote [env]
-    (vector (:val value) env)))
+    [(:val value) env]))
 
 (defmethod analyze :default [exp]
   (fn analyze-default [env]
-    (vector exp env)))
+    [exp env]))
 
 
