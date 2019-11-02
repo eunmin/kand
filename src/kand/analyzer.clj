@@ -1,7 +1,7 @@
 (ns kand.analyzer
   (:refer-clojure :exclude [name])
   (:require [kand.type :refer :all])
-  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Err]))
+  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Quote Err]))
 
 (defmulti analyze type)
 
@@ -22,26 +22,40 @@
   (let [[operator & operands] exps
         fproc (analyze operator)
         aprocs (map analyze operands)]
-    #(let [[app] (fproc %)
-           args (map first (map (fn [aproc] (aproc %)) aprocs))]
-       (execute app args %))))
+    (fn analyze-application [env]
+      (let [[app] (fproc env)
+            args (map first (map (fn [aproc] (aproc env)) aprocs))
+            errs (filter #(instance? Err %) args)]
+        (if (empty? errs)
+          (execute app args env)
+          [errs env])))))
 
 (defmethod analyze Symbol [{:keys [name]}]
-  #(vector (get % name) %))
+  (fn analyze-symbol [env]
+    (if-let [value (get env name)]
+      (vector value env)
+      (vector (->Err (str "Can't find symbol " name)) env))))
 
 (defmethod analyze Def [{:keys [name body]}]
-  #(vector (->Unit) (assoc % (:name name) body)))
+  (fn analyze-def [env]
+    (vector (->Unit) (assoc env (:name name) body))))
 
 (defmethod analyze If [{:keys [pred t f]}]
   (let [pproc (analyze pred)
         tproc (analyze t)
         fproc (analyze f)]
-    #(let [[p] (pproc %)]
-       (if (= (->True) p)
-         (tproc %)
-         (fproc %)))))
+    (fn analyze-if [env]
+      (let [[p] (pproc env)]
+        (if (= (->True) p)
+          (tproc env)
+          (fproc env))))))
+
+(defmethod analyze Quote [value]
+  (fn analyze-quote [env]
+    (vector (:val value) env)))
 
 (defmethod analyze :default [exp]
-  #(vector exp %))
+  (fn analyze-default [env]
+    (vector exp env)))
 
 

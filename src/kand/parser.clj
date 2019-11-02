@@ -53,6 +53,9 @@
       (->Lambda (map parse-token args) (parse-token body))
       (->Err "Parameter declaration should be a vector"))))
 
+(defmethod parse-token :quote [[_ value]]
+  (->Quote (parse-token value)))
+
 (defmethod parse-token :default [token]
   (cond
     (vector? token) (->Application (map parse-token token))
@@ -65,3 +68,4 @@
 (defn parse [s]
   (let [[tokens] (tokenize s "" [])]
     (map parse-token tokens)))
+
