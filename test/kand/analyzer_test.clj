@@ -51,10 +51,17 @@
     (is (= env new-env))))
 
 (deftest analyze-def []
-  (let [exp (->Def (->Symbol "a") (->Num 1))
-        env {}
-        [result new-env] ((analyze exp) env)]
-    (is (= (->Num 1) (get new-env "a")))))
+  (testing "Def"
+    (let [exp (->Def (->Symbol "a") (->Num 1))
+          env {}
+          [result new-env] ((analyze exp) env)]
+      (is (= (->Num 1) (get new-env "a")))))
+  (testing "Def expression"
+    (let [exp (->Def (->Symbol "a") (->Application [(->Primitive identity)
+                                                    (->Num 1)]))
+          env {}
+          [result new-env] ((analyze exp) env)]
+      (is (= (->Num 1) (get new-env "a"))))))
 
 (deftest analyze-if []
   (testing "True"

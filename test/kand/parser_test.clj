@@ -1,7 +1,10 @@
 (ns kand.parser-test
   (:require [clojure.test :refer :all]
-            [kand.parser :refer :all]
-            [kand.type :refer :all])
+            [clojure.spec.gen.alpha :as gen]
+            [kand.parser :refer :all :as parser]
+            [kand.type :refer :all]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.test.alpha :as stest])
   (:import kand.type.Err))
 
 (deftest append-token-test []
@@ -24,7 +27,7 @@
   (testing "Multi string"
     (let [s "abc"
           [result _] (tokenize s "" [])]
-      (is (= ["abc" result]))))
+      (is (= ["abc"] result))))
   (testing "Trim spaces"
     (let [s "  abc  def  "
           [result _] (tokenize s "" [])]
@@ -49,6 +52,15 @@
     (let [s "\"a b c\""
           [result _] (tokenize s "" [])]
       (is (= ["\"a b c\""] result)))))
+
+(deftest tokenize-error []
+  (testing "Mismatched parentheses"
+    (let [s "("
+          [result _] (tokenize s "" [])]
+      (is (contains? result :error))
+      (is (= :mismatched-parentheses (get-in result [:error :type]))))))
+
+(contains? {:error 1} :error)
 
 (deftest parse-token-if []
   (let [s ["if" "a" "b" "c"]
@@ -87,7 +99,8 @@
       (is (= (->Lambda [(->Symbol "x") (->Symbol "y")]
                        (->Application [(->Symbol "+")
                                        (->Symbol "x")
-                                       (->Symbol "y")])))))))
+                                       (->Symbol "y")]))
+             result)))))
 
 (deftest parse-token-fn-error []
   (testing "Too many args"

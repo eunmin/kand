@@ -1,6 +1,11 @@
 (ns kand.parser
   (:require [clojure.string :refer [blank?]]
-            [kand.type :refer :all]))
+            [kand.type :refer :all]
+            [clojure.spec.alpha :as s]))
+
+(s/def ::open-parenthesis? boolean?)
+(s/def ::buffer string?)
+(s/def ::state (s/keys :req [::buffer ::open-parenthesis?]))
 
 (defn append-token [result token]
   (if (= "" token)
