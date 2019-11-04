@@ -9,5 +9,6 @@
                  [org.ow2.asm/asm-util "7.0"]]
   :repl-options {:init-ns kand.main}
   :profiles {:uberjar {:aot :all}
-             :dev {:dependencies [[org.clojure/test.check "0.10.0"]]}}
+             :dev {:dependencies [[org.clojure/test.check "0.10.0"]
+                                  [expound "0.7.2"]]}}
   :main kand.main)

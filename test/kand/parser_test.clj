@@ -3,21 +3,15 @@
             [clojure.spec.gen.alpha :as gen]
             [kand.parser :refer :all :as parser]
             [kand.type :refer :all]
+            [kand.test.util :as tu]
+            [expound.alpha :as expound]
             [clojure.spec.alpha :as s]
             [clojure.spec.test.alpha :as stest])
   (:import kand.type.Err))
 
 (deftest append-token-test []
-  (testing "append-token"
-    (let [token "token"
-          result []
-          result (append-token result token)]
-      (is (= ["token"] result))))
-  (testing "append-token with empty string"
-    (let [token ""
-          result []
-          result (append-token result token)]
-      (is (= [] result)))))
+  (binding [s/*recursion-limit* 2]
+    (is (true? (tu/check `append-token)))))
 
 (deftest tokenize-test []
   (testing "Single string"
