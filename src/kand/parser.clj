@@ -1,51 +1,6 @@
 (ns kand.parser
-  (:require [clojure.string :refer [blank?]]
-            [kand.type :refer :all]
-            [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]))
-
-(s/def ::open-parenthesis? boolean?)
-(s/def ::buffer string?)
-(s/def ::state (s/keys :req [::buffer ::open-parenthesis?]))
-
-(s/def ::token (s/or :value string?
-                     :token-list ::token-list))
-(s/def ::token-list (s/coll-of ::token))
-
-(s/fdef append-token
-  :args (s/cat :result ::token-list :token ::token)
-  :ret ::token-list
-  :fn (s/and #(>= (count (:ret %)) (count (-> % :args :result)))
-             #(if (= (-> % :args :token) "")
-                (= (:ret %) (-> % :args :result))
-                true)))
-(defn append-token [result token]
-  (if (= "" token)
-    result
-    (conj result token)))
-
-(s/fdef tokenize-string
-  :args (s/cat :string string? :buffer ::buffer :result ::token-list)
-  :ret (s/tuple string? (s/nilable string?)))
-(defn tokenize-string [[x & xs] buf result]
-  (if (= \" x)
-    [(str buf x) xs]
-    (tokenize-string xs (str buf x) result)))
-
-(defmulti tokenize (fn [s _ _] s))
-
-(defmethod tokenize nil [_ buf result]
-  [(append-token result buf) ""])
-
-(defmethod tokenize :default [[x & xs] buf result]
-  (cond
-    (= \( x) (let [[ast rst] (tokenize xs "" [])]
-               (tokenize rst "" (append-token (append-token result buf) ast)))
-    (= \) x) [(append-token result buf) xs]
-    (= \" x) (let [[s rst] (tokenize-string xs (str x) result)]
-               (tokenize rst "" (append-token (append-token result buf) s)))
-    (blank? (str x)) (tokenize xs "" (append-token result buf))
-    :else (tokenize xs (str buf x) result)))
+  (:require [kand.tokenizer :refer [tokenize]]
+            [kand.type :refer :all]))
 
 (defmulti parse-token (fn [token]
                         (when (vector? token)

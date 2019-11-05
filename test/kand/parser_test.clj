@@ -2,59 +2,8 @@
   (:require [clojure.test :refer :all]
             [clojure.spec.gen.alpha :as gen]
             [kand.parser :refer :all :as parser]
-            [kand.type :refer :all]
-            [kand.test.util :as tu]
-            [expound.alpha :as expound]
-            [clojure.spec.alpha :as s]
-            [clojure.spec.test.alpha :as stest])
+            [kand.type :refer :all])
   (:import kand.type.Err))
-
-(deftest append-token-test []
-  (binding [s/*recursion-limit* 2]
-    (is (true? (tu/check `append-token)))))
-
-(deftest tokenize-test []
-  (testing "Single string"
-    (let [s "a"
-          [result _] (tokenize s "" [])]
-      (is (= ["a"] result))))
-  (testing "Multi string"
-    (let [s "abc"
-          [result _] (tokenize s "" [])]
-      (is (= ["abc"] result))))
-  (testing "Trim spaces"
-    (let [s "  abc  def  "
-          [result _] (tokenize s "" [])]
-      (is (= ["abc" "def"] result))))
-  (testing "Parentheses"
-    (let [s "(abc)"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc"]] result))))
-  (testing "Parentheses Nested"
-    (let [s "(abc (def))"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc" ["def"]]] result))))
-  (testing "Parentheses Nested (No spaces)"
-    (let [s "(abc(def))"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc" ["def"]]] result))))
-  (testing "Empty parentheses"
-    (let [s "()"
-          [result _] (tokenize s "" [])]
-      (is (= [[]] result))))
-  (testing "String"
-    (let [s "\"a b c\""
-          [result _] (tokenize s "" [])]
-      (is (= ["\"a b c\""] result)))))
-
-(deftest tokenize-error []
-  (testing "Mismatched parentheses"
-    (let [s "("
-          [result _] (tokenize s "" [])]
-      (is (contains? result :error))
-      (is (= :mismatched-parentheses (get-in result [:error :type]))))))
-
-(contains? {:error 1} :error)
 
 (deftest parse-token-if []
   (let [s ["if" "a" "b" "c"]
