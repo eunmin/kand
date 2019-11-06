@@ -16,11 +16,23 @@
 
 (deftest tokenize-string-test []
   (testing "tokenize-string"
-    (let [s "a b c\""
+    (let [s "\"a b c\""
           buf ""
           result []
-          [result rst] (tokenize-string s buf result)]
-      (is (= "a b c\"" result)))))
+          [result rst] (tokenize-string s "" result)]
+      (is (= "\"a b c\"" result))))
+  (testing "mismatch string"
+    (let [s "\"a b c"
+          buf ""
+          result []
+          [result rst] (tokenize-string s "" result)]
+      (is (= :mismatch-string (-> result :error :type)))))
+  (testing "not string riteral"
+    (let [s "x \"a b c\""
+          buf ""
+          result []
+          [result rst] (tokenize-string s "" result)]
+      (is (= :not-string-literal (-> result :error :type))))))
 
 (deftest tokenize-test []
   (testing "Single string"
