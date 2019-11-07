@@ -1,6 +1,7 @@
 (ns kand.parser
   (:require [kand.tokenizer :refer [tokenize]]
-            [kand.type :refer :all]))
+            [kand.type :refer :all]
+            [cats.monad.either :refer :all]))
 
 (defmulti parse-token (fn [token]
                         (when (vector? token)
@@ -41,6 +42,8 @@
     :else (->Symbol token)))
 
 (defn parse [s]
-  (let [[tokens] (tokenize s "" [])]
-    (map parse-token tokens)))
+  (let [value (tokenize s "" [])]
+    (if (right? value)
+      (map parse-token (first (:right value)))
+      (throw (ex-info "tokenizer error" (:left value))))))
 

@@ -1,6 +1,7 @@
 (ns kand.tokenizer-test
   (:require [kand.tokenizer :refer :all]
-            [clojure.test :refer :all]))
+            [clojure.test :refer :all]
+            [cats.monad.either :refer :all]))
 
 (deftest append-token-test []
   (testing "append-token"
@@ -19,60 +20,59 @@
     (let [s "\"a b c\""
           buf ""
           result []
-          [result rst] (tokenize-string s "" result)]
-      (is (= "\"a b c\"" result))))
+          {:keys [right]} (tokenize-string s "" result)]
+      (is (= "\"a b c\"" (first right)))))
   (testing "mismatch string"
     (let [s "\"a b c"
           buf ""
           result []
-          [result rst] (tokenize-string s "" result)]
-      (is (= :mismatch-string (-> result :error :type)))))
+          {:keys [left]} (tokenize-string s "" result)]
+      (is (= "Mismatched String" (:message left)))))
   (testing "not string riteral"
     (let [s "x \"a b c\""
           buf ""
           result []
-          [result rst] (tokenize-string s "" result)]
-      (is (= :not-string-literal (-> result :error :type))))))
+          {:keys [left]} (tokenize-string s "" result)]
+      (is (= "Not String literal" (:message left))))))
 
 (deftest tokenize-test []
   (testing "Single string"
     (let [s "a"
-          [result _] (tokenize s "" [])]
-      (is (= ["a"] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= ["a"] (first right)))))
   (testing "Multi string"
     (let [s "abc"
-          [result _] (tokenize s "" [])]
-      (is (= ["abc"] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= ["abc"] (first right)))))
   (testing "Trim spaces"
     (let [s "  abc  def  "
-          [result _] (tokenize s "" [])]
-      (is (= ["abc" "def"] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= ["abc" "def"] (first right)))))
   (testing "Parentheses"
     (let [s "(abc)"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc"]] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= [["abc"]] (first right)))))
   (testing "Parentheses Nested"
     (let [s "(abc (def))"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc" ["def"]]] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= [["abc" ["def"]]] (first right)))))
   (testing "Parentheses Nested (No spaces)"
     (let [s "(abc(def))"
-          [result _] (tokenize s "" [])]
-      (is (= [["abc" ["def"]]] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= [["abc" ["def"]]] (first right)))))
   (testing "Empty parentheses"
     (let [s "()"
-          [result _] (tokenize s "" [])]
-      (is (= [[]] result))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= [[]] (first right)))))
   (testing "String"
     (let [s "\"a b c\""
-          [result _] (tokenize s "" [])]
-      (is (= ["\"a b c\""] result)))))
+          {:keys [right]} (tokenize s "" [])]
+      (is (= ["\"a b c\""] (first right))))))
 
-;; (deftest tokenize-error []
-;;   (testing "Mismatched parentheses"
-;;     (let [s "("
-;;           [result _] (tokenize s "" [])]
-;;       (is (contains? result :error))
-;;       (is (= :mismatched-parentheses (get-in result [:error :type]))))))
+(deftest tokenize-error []
+  (testing "Mismatched string"
+    (let [s "\""
+          {:keys [left]} (tokenize s "" [])]
+      (is (= "Mismatched String" (:message left))))))
 
 

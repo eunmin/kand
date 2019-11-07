@@ -6,7 +6,8 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [org.apache.commons/commons-lang3 "3.9"]
                  [org.ow2.asm/asm "7.0"]
-                 [org.ow2.asm/asm-util "7.0"]]
+                 [org.ow2.asm/asm-util "7.0"]
+                 [funcool/cats "2.3.2"]]
   :repl-options {:init-ns kand.main}
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[org.clojure/test.check "0.10.0"]
