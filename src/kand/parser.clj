@@ -45,5 +45,5 @@
   (let [value (tokenize s "" [])]
     (if (right? value)
       (map parse-token (first (:right value)))
-      (throw (ex-info "tokenizer error" (:left value))))))
+      (->Err (str "tokenizer error" (:left value))))))
 

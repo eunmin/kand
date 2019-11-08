@@ -35,5 +35,6 @@
     (= \" x) (m/bind (tokenize-string s "" result)
                      (fn [[s rst]]
                        (tokenize rst "" (append-token (append-token result buf) s))))
+    (nil? x) (left {:message "Mismatched parentheses"})
     (blank? (str x)) (tokenize xs "" (append-token result buf))
     :else (tokenize xs (str buf x) result)))

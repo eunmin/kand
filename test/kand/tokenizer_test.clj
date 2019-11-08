@@ -73,6 +73,10 @@
   (testing "Mismatched string"
     (let [s "\""
           {:keys [left]} (tokenize s "" [])]
-      (is (= "Mismatched String" (:message left))))))
+      (is (= "Mismatched String" (:message left)))))
+  (testing "Mismatched parentheses"
+    (let [s "("
+          {:keys [left]} (tokenize s "" [])]
+      (is (= "Mismatched parentheses" (:message left))))))
 
 
