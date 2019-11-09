@@ -14,3 +14,4 @@
 (defrecord Quote [val])
 (defrecord Unit [])
 (defrecord Err [message])
+(defrecord Module [name])
