@@ -11,7 +11,7 @@
 (defn eval [exp env]
   ((analyze exp) env))
 
-(defn repl [env]
+(defn repl [env s]
   (print "> ")
   (flush)
   (let [line (read-line)
@@ -21,12 +21,16 @@
       (let [result (m/fmap #(reduce (fn [[_ env] exp]
                                        (eval exp env))
                                      [nil env] %)
-                           (parse line))]
+                           (parse (str s line)))]
         (if (right? result)
           (println (first (:right result)))
-          (println "Error: " (-> result :left :message)))
-        (repl (second result))))))
+          (let [message (-> result :left :message)]
+            (if (or (= message "Mismatched String")
+                    (= message "Mismatched parentheses"))
+              (repl env (str line "\n"))
+              (println "Error: " message))))
+        (repl (second (:right result)) "")))))
 
 (defn -main [& args]
   (println "Kand REPL\nTo exit type :quit")
-  (repl core-env))
+  (repl core-env ""))
