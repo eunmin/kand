@@ -42,6 +42,9 @@
 (defmethod parse-token :quote [[_ value]]
   (m/fmap #(->Quote %) (parse-token value)))
 
+(defmethod parse-token :module [[_ module-name]]
+  (m/fmap #(->Module %) (parse-token module-name)))
+
 (defmethod parse-token :default [token]
   (cond
     (vector? token) (m/fmap #(->Application %) (m/mapseq parse-token token))

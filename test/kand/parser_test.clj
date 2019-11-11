@@ -5,36 +5,36 @@
             [kand.type :refer :all]
             [cats.monad.either :refer :all]))
 
-(deftest parse-token-if []
+(deftest parse-token-if-test []
   (let [s ["if" "a" "b" "c"]
         result (parse-token s)]
     (is (right? result))
     (is (= (->If (->Symbol "a") (->Symbol "b") (->Symbol "c")) (:right result)))))
 
-(deftest parse-token-if-error []
+(deftest parse-token-if-error-test []
   (let [s ["if" "a" "b" "c" "d"]
         result (parse-token s)]
     (is (left? result))))
 
-(deftest parse-token-def []
+(deftest parse-token-def-test []
   (let [s ["def" "a" "1"]
         result (parse-token s)]
     (is (right? result))
     (is (= (->Def (->Symbol "a") (->Num 1)) (:right result)))))
 
-(deftest parse-token-def-function []
+(deftest parse-token-def-function-test []
   (let [s ["def" ["a" "x"] "x"]
         result (parse-token s)]
     (is (right? result))
     (is (= (->Def (->Symbol "a") (->Lambda [(->Symbol "x")]
                                            (->Symbol "x"))) (:right result)))))
 
-(deftest parse-token-def-error []
+(deftest parse-token-def-error-test []
   (let [s ["def" "a" "1" "2" "3"]
         result (parse-token s)]
     (is (left? result))))
 
-(deftest parse-token-fn []
+(deftest parse-token-fn-test []
   (testing "No parameters"
     (let [s ["fn" [] "1"]
           result (parse-token s)]
@@ -50,7 +50,7 @@
                                        (->Symbol "y")]))
              (:right result))))))
 
-(deftest parse-token-fn-error []
+(deftest parse-token-fn-error-test []
   (testing "Too many args"
     (let [s ["fn" [] "1" "2"]
           result (parse-token s)]
@@ -60,7 +60,7 @@
           result (parse-token s)]
       (is (left? result)))))
 
-(deftest parse-token-vector []
+(deftest parse-token-vector-test []
   (let [s ["+" "1" "2"]
         result (parse-token s)]
     (is (right? result))
@@ -69,29 +69,35 @@
                            (->Num 2)])
            (:right result)))))
 
-(deftest parse-token-number []
+(deftest parse-token-number-test []
   (let [s "1"
         result (parse-token s)]
     (is (right? result))
     (is (= (->Num 1) (:right result)))))
 
-(deftest parse-token-symbol []
+(deftest parse-token-symbol-test []
   (let [s "a"
         result (parse-token s)]
     (is (right? result))
     (is (= (->Symbol "a") (:right result)))))
 
-(deftest parse-token-true []
+(deftest parse-token-true-test []
   (let [s "true"
         result (parse-token s)]
     (is (right? result))
     (is (= (->True) (:right result)))))
 
-(deftest parse-token-false []
+(deftest parse-token-false-test []
   (let [s "false"
         result (parse-token s)]
     (is (right? result))
     (is (= (->False) (:right result)))))
+
+(deftest parse-token-moudle-test []
+  (let [s ["module" "user"]
+        result (parse-token s)]
+    (is (right? result))
+    (is (= (->Module (->Symbol "user")) (:right result)))))
 
 (deftest parse-test []
   (let [s "(def add (fn (x y) (+ 1 (+ x y))))"

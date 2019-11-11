@@ -1,7 +1,8 @@
 (ns kand.analyzer
   (:refer-clojure :exclude [name])
-  (:require [kand.type :refer :all])
-  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Quote Err]))
+  (:require [kand.type :refer :all]
+            [clojure.string :refer [split]])
+  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Quote Err Module]))
 
 (defmulti analyze type)
 
@@ -30,16 +31,20 @@
           (execute app args env)
           [errs env])))))
 
-(defmethod analyze Symbol [{:keys [name]}]
-  (fn analyze-symbol [env]
-    (if-let [value (get env name)]
-      [value env]
-      [(->Err (str "Can't find symbol " name)) env])))
+(defmethod analyze Symbol [sym]
+  (let [[m n] (split (:name sym) #"/")
+        module (when n m)
+        sym-name (if n n m)]
+    (fn analyze-symbol [env]
+      (if-let [value (get env sym-name)]
+        [value env]
+        [(->Err (str "Can't find symbol " sym-name)) env]))))
 
 (defmethod analyze Def [{:keys [name body]}]
   (let [bodyf (analyze body)]
     (fn analyze-def [env]
-      (let [[result env] (bodyf env)]
+      (let [[result env] (bodyf env)
+            *current-module* (:*current-module* env (->Symbol "user"))]
         [(->Unit) (assoc env (:name name) result)]))))
 
 (defmethod analyze If [{:keys [pred t f]}]
@@ -55,6 +60,10 @@
 (defmethod analyze Quote [value]
   (fn analyze-quote [env]
     [(:val value) env]))
+
+(defmethod analyze Module [module-name]
+  (fn analyze-module [env]
+    [(->Unit) (assoc env :*current-module* (:name module-name))]))
 
 (defmethod analyze :default [exp]
   (fn analyze-default [env]

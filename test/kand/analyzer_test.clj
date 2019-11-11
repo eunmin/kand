@@ -4,14 +4,14 @@
             [clojure.test :refer :all])
   (:import kand.type.Err))
 
-(deftest execute-primitive []
+(deftest execute-primitive-test []
   (let [exp (->Primitive identity)
         env {}
         [result new-env] (execute exp [(->Num 1)] env)]
     (is (= (->Num 1) result))
     (is (= env new-env))))
 
-(deftest execute-lambda []
+(deftest execute-lambda-test []
   (let [exp (->Lambda [(->Symbol "x") (->Symbol "y")]
                       (->Application
                        [(->Symbol "+") (->Symbol "x") (->Symbol "y")]))
@@ -27,7 +27,7 @@
     (is (instance? Err result))
     (is (= env new-env))))
 
-(deftest analyze-application []
+(deftest analyze-application-test []
   (testing "Application"
     (let [exp (->Application [(->Primitive identity) (->Num 1)])
           env {}
@@ -50,7 +50,7 @@
     (is (= result (->Num 1)))
     (is (= env new-env))))
 
-(deftest analyze-def []
+(deftest analyze-def-test []
   (testing "Def"
     (let [exp (->Def (->Symbol "a") (->Num 1))
           env {}
@@ -63,7 +63,7 @@
           [result new-env] ((analyze exp) env)]
       (is (= (->Num 1) (get new-env "a"))))))
 
-(deftest analyze-if []
+(deftest analyze-if-test []
   (testing "True"
     (let [exp (->If (->True) (->Num 1) (->Num 2))
           env {}
@@ -77,7 +77,13 @@
       (is (= (->Num 2) result))
       (is (= env new-env)))))
 
-(deftest analyze-default []
+(deftest analyze-module-test []
+  (let [exp (->Module (->Symbol "user"))
+        env {}
+        [result new-env] ((analyze exp) env)]
+    (is (= (->Symbol "user") (:*current-module* new-env)))))
+
+(deftest analyze-default-test []
   (let [exp (->Num 1)
         env {}
         [result new-env] ((analyze exp) env)]
