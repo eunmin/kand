@@ -10,7 +10,8 @@
 
 (defmethod execute Lambda [{:keys [params body]} args env]
   (let [bproc (analyze body)
-        [result _] (bproc (merge env (zipmap (map :name params) args)))]
+        [result _] (bproc (merge env (zipmap (map (comp keyword :name) params)
+                                             args)))]
     [result env]))
 
 (defmethod execute Primitive [{:keys [f]} args env]
@@ -36,7 +37,7 @@
         module (when n m)
         sym-name (if n n m)]
     (fn analyze-symbol [env]
-      (if-let [value (get env sym-name)]
+      (if-let [value (get env (keyword sym-name))]
         [value env]
         [(->Err (str "Can't find symbol " sym-name)) env]))))
 
@@ -45,7 +46,7 @@
     (fn analyze-def [env]
       (let [[result env] (bodyf env)
             *current-module* (:*current-module* env (->Symbol "user"))]
-        [(->Unit) (assoc env (:name name) result)]))))
+        [(->Unit) (assoc env (keyword (:name name)) result)]))))
 
 (defmethod analyze If [{:keys [pred t f]}]
   (let [pproc (analyze pred)
