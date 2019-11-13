@@ -15,7 +15,8 @@
   (let [exp (->Lambda [(->Symbol "x") (->Symbol "y")]
                       (->Application
                        [(->Symbol "+") (->Symbol "x") (->Symbol "y")]))
-        env {:+ (->Primitive (fn [{x :val} {y :val}] (->Num (+ x y))))}
+        env {:core/*module* (->Symbol "user")
+             :user/+ (->Primitive (fn [{x :val} {y :val}] (->Num (+ x y))))}
         [result new-env] (execute exp [(->Num 1) (->Num 2)] env)]
     (is (= (->Num 3) result))
     (is (= env new-env))))
@@ -45,7 +46,8 @@
 
 (deftest analyze-symbol []
   (let [exp (->Symbol "a")
-        env {:a (->Num 1)}
+        env {:core/*module* (->Symbol "user")
+             :user/a (->Num 1)}
         [result new-env] ((analyze exp) env)]
     (is (= result (->Num 1)))
     (is (= env new-env))))
@@ -53,15 +55,15 @@
 (deftest analyze-def-test []
   (testing "Def"
     (let [exp (->Def (->Symbol "a") (->Num 1))
-          env {}
+          env {:core/*module* (->Symbol "user")}
           [result new-env] ((analyze exp) env)]
-      (is (= (->Num 1) (get new-env :a)))))
+      (is (= (->Num 1) (get new-env :user/a)))))
   (testing "Def expression"
     (let [exp (->Def (->Symbol "a") (->Application [(->Primitive identity)
                                                     (->Num 1)]))
-          env {}
+          env {:core/*module* (->Symbol "user")}
           [result new-env] ((analyze exp) env)]
-      (is (= (->Num 1) (get new-env :a))))))
+      (is (= (->Num 1) (get new-env :user/a))))))
 
 (deftest analyze-if-test []
   (testing "True"
@@ -81,7 +83,7 @@
   (let [exp (->Module (->Symbol "user"))
         env {}
         [result new-env] ((analyze exp) env)]
-    (is (= (->Symbol "user") (:*current-module* new-env)))))
+    (is (= (->Symbol "user") (:core/*module* new-env)))))
 
 (deftest analyze-default-test []
   (let [exp (->Num 1)

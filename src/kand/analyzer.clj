@@ -10,7 +10,9 @@
 
 (defmethod execute Lambda [{:keys [params body]} args env]
   (let [bproc (analyze body)
-        [result _] (bproc (merge env (zipmap (map (comp keyword :name) params)
+        module (:name (:core/*module* env))
+        [result _] (bproc (merge env (zipmap (map #(keyword module (:name %))
+                                                  params)
                                              args)))]
     [result env]))
 
@@ -37,16 +39,17 @@
         module (when n m)
         sym-name (if n n m)]
     (fn analyze-symbol [env]
-      (if-let [value (get env (keyword sym-name))]
-        [value env]
-        [(->Err (str "Can't find symbol " sym-name)) env]))))
+      (let [module (or module (:name (:core/*module* env)))]
+        (if-let [value (get env (keyword module sym-name))]
+          [value env]
+          [(->Err (str "Can't find symbol " sym-name)) env])))))
 
 (defmethod analyze Def [{:keys [name body]}]
   (let [bodyf (analyze body)]
     (fn analyze-def [env]
       (let [[result env] (bodyf env)
-            *current-module* (:*current-module* env (->Symbol "user"))]
-        [(->Unit) (assoc env (keyword (:name name)) result)]))))
+            module (:core/*module* env)]
+        [(->Unit) (assoc env (keyword (:name module) (:name name)) result)]))))
 
 (defmethod analyze If [{:keys [pred t f]}]
   (let [pproc (analyze pred)
@@ -62,9 +65,9 @@
   (fn analyze-quote [env]
     [(:val value) env]))
 
-(defmethod analyze Module [module-name]
+(defmethod analyze Module [sym]
   (fn analyze-module [env]
-    [(->Unit) (assoc env :*current-module* (:name module-name))]))
+    [(->Unit) (assoc env :core/*module* (:name sym))]))
 
 (defmethod analyze :default [exp]
   (fn analyze-default [env]
