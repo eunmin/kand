@@ -45,6 +45,9 @@
 (defmethod parse-token :module [[_ module-name]]
   (m/fmap #(->Module %) (parse-token module-name)))
 
+(defmethod parse-token :import [[_ module]]
+  (m/fmap #(->Import %) (parse-token module)))
+
 (defmethod parse-token :default [token]
   (cond
     (vector? token) (m/fmap #(->Application %) (m/mapseq parse-token token))

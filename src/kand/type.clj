@@ -15,3 +15,4 @@
 (defrecord Unit [])
 (defrecord Err [message])
 (defrecord Module [name])
+(defrecord Import [module])

@@ -99,6 +99,12 @@
     (is (right? result))
     (is (= (->Module (->Symbol "user")) (:right result)))))
 
+(deftest parse-token-import-test []
+  (let [s ["import" "user"]
+        result (parse-token s)]
+    (is (right? result))
+    (is (= (->Import (->Symbol "user")) (:right result)))))
+
 (deftest parse-test []
   (let [s "(def add (fn (x y) (+ 1 (+ x y))))"
         result (parse s)]
