@@ -1,8 +1,11 @@
 (ns kand.analyzer
   (:refer-clojure :exclude [name])
   (:require [kand.type :refer :all]
-            [clojure.string :refer [split]])
-  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Quote Err Module]))
+            [clojure.string :refer [split]]
+            [kand.parser :refer [parse]]
+            [cats.core :as m]
+            [cats.monad.either :refer :all])
+  (:import [kand.type Application If Def Lambda Primitive Symbol Num True False Unit Quote Err Module Import Eval]))
 
 (defmulti analyze type)
 
@@ -69,8 +72,21 @@
   (fn analyze-module [env]
     [(->Unit) (assoc env :core/*module* (:name sym))]))
 
+(defmethod analyze Import [module]
+  (fn analyze-import [env]
+    (let [code (slurp (str (-> module :module :name) ".knd"))]
+      ((analyze (->Eval (->Str code))) env))))
+
+(defmethod analyze Eval [code]
+  (fn analyze-eval [env]
+    (let [result (m/fmap #(reduce (fn [[_ env] exp]
+                                    ((analyze exp) env))
+                                  [nil env] %)
+                         (parse (-> code :code :val)))]
+      (if (right? result)
+        [(first (:right result)) (second (:right result))]
+        [(->Err (:left result)) env]))))
+
 (defmethod analyze :default [exp]
   (fn analyze-default [env]
     [exp env]))
-
-

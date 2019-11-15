@@ -105,6 +105,12 @@
     (is (right? result))
     (is (= (->Import (->Symbol "user")) (:right result)))))
 
+(deftest parse-token-import-test []
+  (let [s ["eval" "\"(+ 1 2)\""]
+        result (parse-token s)]
+    (is (right? result))
+    (is (= (->Eval (->Str "(+ 1 2)")) (:right result)))))
+
 (deftest parse-test []
   (let [s "(def add (fn (x y) (+ 1 (+ x y))))"
         result (parse s)]

@@ -85,6 +85,19 @@
         [result new-env] ((analyze exp) env)]
     (is (= (->Symbol "user") (:core/*module* new-env)))))
 
+(deftest analyze-import-test []
+  (let [exp (->Import (->Symbol "test"))
+        env {}
+        [_ new-env] ((analyze exp) env)]
+    (is (= (->Num 1) (:test/a new-env)))))
+
+(deftest analyze-eval-test []
+  (let [exp (->Eval (->Str "(+ 1 2)"))
+        env {:core/*module* (->Symbol "user")
+             :user/+ (->Primitive (fn [{x :val} {y :val}] (->Num (+ x y))))}
+        [result new-env] ((analyze exp) env)]
+    (is (= (->Num 3) result))))
+
 (deftest analyze-default-test []
   (let [exp (->Num 1)
         env {}

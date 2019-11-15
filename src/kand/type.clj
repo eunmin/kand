@@ -15,4 +15,5 @@
 (defrecord Unit [])
 (defrecord Err [message])
 (defrecord Module [name])
+(defrecord Eval [code])
 (defrecord Import [module])
