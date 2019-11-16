@@ -74,8 +74,10 @@
 
 (defmethod analyze Import [module]
   (fn analyze-import [env]
-    (let [code (slurp (str (-> module :module :name) ".knd"))]
-      ((analyze (->Eval (->Str code))) env))))
+    (let [code (slurp (str (-> module :module :name) ".knd"))
+          org-module (:core/*module* env)
+          [result new-env] ((analyze (->Eval (->Str code))) env)]
+      [result (assoc new-env :core/*module* org-module)])))
 
 (defmethod analyze Eval [code]
   (fn analyze-eval [env]
