@@ -90,7 +90,8 @@
         env {:core/*module* (->Symbol "user")}
         [_ new-env] ((analyze exp) env)]
     (is (= (->Symbol "user") (:core/*module* new-env)))
-    (is (= (->Num 1) (:test/a new-env)))))
+    (is (= (->Num 1) (:test/a new-env)))
+    (is (= (->Num 1) (:user/a new-env)))))
 
 (deftest analyze-eval-test []
   (let [exp (->Eval (->Str "(+ 1 2)"))

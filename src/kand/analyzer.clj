@@ -72,12 +72,22 @@
   (fn analyze-module [env]
     [(->Unit) (assoc env :core/*module* (:name sym))]))
 
+(defn rename-keys-ns [m old-ns new-ns]
+  (into {} (map #(vector (keyword new-ns (clojure.core/name %))
+                         (% m))
+                (filter #(= old-ns (namespace %)) (keys m)))))
+
 (defmethod analyze Import [module]
   (fn analyze-import [env]
-    (let [code (slurp (str (-> module :module :name) ".knd"))
+    (let [module-name (-> module :module :name)
+          code (slurp (str module-name ".knd"))
           org-module (:core/*module* env)
           [result new-env] ((analyze (->Eval (->Str code))) env)]
-      [result (assoc new-env :core/*module* org-module)])))
+      [result (-> new-env
+                  (merge new-env (rename-keys-ns new-env
+                                                 module-name
+                                                 (:name org-module)))
+                  (assoc :core/*module* org-module))])))
 
 (defmethod analyze Eval [code]
   (fn analyze-eval [env]
