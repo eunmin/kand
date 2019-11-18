@@ -1,4 +1,4 @@
-{-# LANGUAGE MagicHash, FlexibleContexts, TypeFamilies, DataKinds, TypeOperators #-}
+{-# LANGUAGE MultiParamTypeClasses, TypeFamilies, DataKinds #-}
 
 module Asm.AsmNm ( newAsmNm ) where
 
@@ -7,6 +7,6 @@ import Asm.AsmExp
 
 data AsmNm = AsmNm @kand.asm.Nm deriving Class
 
-type instance Inherits AsmNm = '[AsmExp]
-
 foreign import java unsafe "@new" newAsmNm :: Double -> Java a AsmNm
+
+type instance Inherits AsmNm = '[AsmExp]

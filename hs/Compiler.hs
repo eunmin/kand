@@ -17,7 +17,7 @@ type instance Inherits AsmVarArray = '[AsmExpArray]
 toJStringArray :: [String] -> JStringArray
 toJStringArray strs = toJava jstrings
   where jstrings = map toJava strs :: [JString]
-  
+
 compile :: [String] -> IO ()
 compile (filename:[]) = do
   code <- byteArray
@@ -28,7 +28,7 @@ compile (filename:[]) = do
     byteArray = java $ do
       var1 <- newAsmVar 1
       var2 <- newAsmVar 2
-      args <- arrayFromList [var1, var2]
+      args <- arrayFromList [ (superCast var1 :: AsmExp)
+                            , (superCast var2 :: AsmExp) ]
       exp <- newAsmMethod "kand/runtime/Core" "add" args
       return $ FnClass.write "example/add" (toJStringArray ["x", "y"]) exp
-  

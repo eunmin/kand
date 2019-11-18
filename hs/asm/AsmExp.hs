@@ -11,4 +11,6 @@ data AsmExp = AsmExp @kand.asm.Exp deriving Class
 
 data AsmExpArray = AsmExpArray @kand.asm.Exp[] deriving Class
 
+foreign import java unsafe "@interface" visit :: MethodVisitor -> Java a ()
+
 instance JArray AsmExp AsmExpArray
