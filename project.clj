@@ -9,6 +9,7 @@
                  [org.ow2.asm/asm-util "7.0"]
                  [funcool/cats "2.3.2"]]
   :repl-options {:init-ns kand.main}
+  :source-paths ["src/clj"]
   :profiles {:uberjar {:aot :all}
              :dev {:dependencies [[org.clojure/test.check "0.10.0"]
                                   [expound "0.7.2"]]}}

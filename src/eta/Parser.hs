@@ -62,4 +62,4 @@ parseRootTokenList EmptyTokenList = []
 
 
 parse :: String -> [Exp]
-  parse s = parseRootTokenList $ (fst $ tokenize s "" EmptyTokenList)
+parse s = parseRootTokenList $ (fst $ tokenize s "" EmptyTokenList)

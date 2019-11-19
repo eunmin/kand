@@ -12,8 +12,6 @@ import Asm.AsmNm
 import Parser
 import Java
 
-type instance Inherits AsmVarArray = '[AsmExpArray]
-
 toJStringArray :: [String] -> JStringArray
 toJStringArray strs = toJava jstrings
   where jstrings = map toJava strs :: [JString]
