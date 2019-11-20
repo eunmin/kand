@@ -21,6 +21,7 @@ executable kand
                      , Core
                      , Analyzer
                      , Parser
+                     , Tokenizer
                      , Asm.FnClassWriter
                      , Asm.MainClassWriter
                      , Asm.AsmExp
