@@ -73,3 +73,7 @@ java -jar target/kand-0.1.0-SNAPSHOT-standalone.jar
 ### Tools
 
 - [ASM Bytecode Viewer](https://plugins.jetbrains.com/plugin/10302-asm-bytecode-viewer)
+
+### Friend Projects
+
+- [lengine](https://github.com/gkm2164/lengine)
