@@ -1,4 +1,5 @@
-module Parser ( parse ) where
+module Kand.Parser ( Expr(..)
+                   , parse ) where
 
 import Text.ParserCombinators.Parsec ((<|>))
 import qualified Text.ParserCombinators.Parsec as Parsec
@@ -12,7 +13,6 @@ data Expr = ExprList [Expr]
           | ExprDef
           | ExprTrue
           | ExprFalse
-          | ExprFn
           deriving (Show)
 
 whitespaces :: Parsec.Parser String
@@ -28,19 +28,12 @@ string = do
   Parsec.char '"'
   return (ExprString x)
 
-true :: Parsec.Parser Expr
-true = ExprTrue <$ Parsec.string "true"
-
-false :: Parsec.Parser Expr
-false = ExprFalse <$ Parsec.string "false"
-
-fn :: Parsec.Parser Expr
-fn = ExprFn <$ Parsec.string "fn"
-
 symbol :: Parsec.Parser Expr
 symbol = do
   x <- Parsec.many1 (Parsec.noneOf "() ")
   return $ case x of
+             "true" -> ExprTrue
+             "false" -> ExprFalse
              "if" -> ExprIf
              "def" -> ExprDef
              "quote" -> ExprQuoted
@@ -62,10 +55,7 @@ list = do
   return (ExprList x)
 
 expr :: Parsec.Parser Expr
-expr = Parsec.try true <|>
-       Parsec.try false <|>
-       Parsec.try fn <|>
-       Parsec.try number <|>
+expr = Parsec.try number <|>
        Parsec.try string <|>
        Parsec.try quoted <|>
        Parsec.try symbol <|>
