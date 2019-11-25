@@ -13,6 +13,7 @@ data Expr = ExprList [Expr]
           | ExprDef
           | ExprTrue
           | ExprFalse
+          | ExprFn String
           deriving (Show)
 
 whitespaces :: Parsec.Parser String

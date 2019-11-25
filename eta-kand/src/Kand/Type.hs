@@ -5,6 +5,7 @@ data KandType = KandList [KandType]
               | KandNumber Integer
               | KandString String
               | KandBool Bool
+              | KandFn [KandType] KandType
               | KandUnit
               deriving (Show)
 
