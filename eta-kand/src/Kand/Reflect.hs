@@ -13,8 +13,7 @@ foreign import java unsafe "@static java.lang.Class.forName" forName :: String -
 
 test :: IO JString
 test = java $ do
---  (arr :: JObjectArray) <- arrayFromList [toJString "a"]
-  (arr :: JObjectArray) <- arrayFromList []
+  (arr :: JObjectArray) <- arrayFromList [superCast $ toJString "abc"]
   (cls :: JClass JString) <- forName "java.lang.String"
   obj <- newObject cls arr
   return obj
