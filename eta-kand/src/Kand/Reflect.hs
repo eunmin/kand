@@ -7,7 +7,7 @@ module Kand.Reflect ( forName
                     , test2
                     , newBoolean
                     , booleanValue
-                    ) where
+                    , lastIndexOf ) where
 
 import Java
 
@@ -42,4 +42,13 @@ test2 s = java $ do
   bb <- b <.> booleanValue
   return bb
 
-  
+lastIndexOf :: String -> String -> Int -> Java c JInteger
+lastIndexOf s str fromIndex = do
+  (arr :: JObjectArray) <- arrayFromList [superCast $ toJString s]
+  (cls :: JClass JString) <- forName "java.lang.String"
+  obj <- newObject cls arr
+  (args :: JObjectArray) <- arrayFromList [ superCast $ toJString str  
+                                          , superCast $ (toJava fromIndex :: JInteger) ]
+  (o :: Object) <- invokeMethod obj "lastIndexOf" args
+  return $ unsafeCast o
+
