@@ -45,15 +45,14 @@ type instance Inherits JBool = '[Object]
 --   (o :: Object) <- invokeMethod obj "lastIndexOf" args
 --   return $ unsafeCast o
 
-newInstance :: String -> [String] -> Java c JString
+newInstance :: String -> [Object] -> Java c JString
 newInstance className args = do
-  (arr :: JObjectArray) <- arrayFromList $ map (superCast . toJString) args
+  arr <- arrayFromList args
   (cls :: JClass Object) <- forName className
   obj <- newObject cls arr
   return $ unsafeCast obj
 
 test2 :: IO JString
 test2 = java $ do
-  obj <- newInstance "java.lang.String" ["a"] 
+  obj <- newInstance "java.lang.String" [(superCast $ toJString "a")] 
   return obj
-  
