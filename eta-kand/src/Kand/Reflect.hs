@@ -3,6 +3,8 @@
 module Kand.Reflect ( forName
                     , newObject
                     , invokeMethod
+                    , invoke
+                    , test
                     , test2
                     , newBoolean
                     , booleanValue
@@ -26,33 +28,28 @@ foreign import java unsafe booleanValue :: Java JBool Bool
 
 type instance Inherits JBool = '[Object]
 
--- test :: String -> Java c JBool
--- test s = do
---   (arr :: JObjectArray) <- arrayFromList [superCast $ toJString s]
---   (cls :: JClass JString) <- forName "java.lang.String"
---   obj <- newObject cls arr
---   (args :: JObjectArray) <- (arrayFromList [])
---   (o :: Object) <- invokeMethod obj "isEmpty" args
---   return $ unsafeCast o
-
--- lastIndexOf :: String -> String -> Int -> Java c JInteger
--- lastIndexOf s str fromIndex = do
---   (arr :: JObjectArray) <- arrayFromList [superCast $ toJString s]
---   (cls :: JClass JString) <- forName "java.lang.String"
---   obj <- newObject cls arr
---   (args :: JObjectArray) <- arrayFromList [ superCast $ toJString str  
---                                           , superCast $ (toJava fromIndex :: JInteger) ]
---   (o :: Object) <- invokeMethod obj "lastIndexOf" args
---   return $ unsafeCast o
-
-newInstance :: String -> [Object] -> Java c JString
+newInstance :: (a <: Object) => String -> [Object] -> Java c a
 newInstance className args = do
   arr <- arrayFromList args
   (cls :: JClass Object) <- forName className
   obj <- newObject cls arr
   return $ unsafeCast obj
 
-test2 :: IO JString
-test2 = java $ do
-  obj <- newInstance "java.lang.String" [(superCast $ toJString "a")] 
-  return obj
+invoke :: (a <: Object) => Object -> String -> [Object] -> Java c a
+invoke obj methodName args = do
+  arr <- arrayFromList args
+  r <- invokeMethod obj methodName arr
+  return r
+
+test :: String -> IO Bool
+test s = java $ do
+  obj <- newInstance "java.lang.String" [(superCast $ toJString s)]
+  r <- invoke obj "isEmpty" []
+  r2 <- r <.> booleanValue
+  return r2
+
+test2 :: String -> IO JInteger
+test2 s = java $ do
+  obj <- newInstance "java.lang.String" [(superCast $ toJString s)]
+  r <- invoke obj "indexOf" [ superCast $ (toJava (0 :: Int) :: JInteger) ]
+  return r
