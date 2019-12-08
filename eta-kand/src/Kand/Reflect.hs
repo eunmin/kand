@@ -1,4 +1,4 @@
-{-# LANGUAGE TypeFamilies, DataKinds, TypeOperators, FlexibleContexts, OverloadedStrings, ScopedTypeVariables #-}
+{-# LANGUAGE TypeFamilies, DataKinds, TypeOperators, FlexibleContexts, OverloadedStrings, ScopedTypeVariables, MultiParamTypeClasses #-}
 
 module Kand.Reflect ( forName
                     , newObject
@@ -16,7 +16,7 @@ foreign import java unsafe "@static java.lang.Class.forName" forName :: String -
 
 foreign import java unsafe "@static org.apache.commons.lang3.reflect.ConstructorUtils.invokeConstructor" newObject :: (a <: Object) => JClass a -> JObjectArray -> Java c a
 
-foreign import java unsafe "@static org.apache.commons.lang3.reflect.MethodUtils.invokeExactMethod" invokeMethod :: (a <: Object, b <: Object) => a -> String ->  JObjectArray -> Java c b
+foreign import java unsafe "@static org.apache.commons.lang3.reflect.MethodUtils.invokeExactMethod" invokeMethod :: (a <: Object, b <: Object) => a -> String ->  JObjectArray -> JClassArray -> Java c b
 
 foreign import java unsafe isEmpty :: Java JString Bool
 
@@ -28,6 +28,12 @@ foreign import java unsafe booleanValue :: Java JBool Bool
 
 type instance Inherits JBool = '[Object]
 
+data JavaClass = JavaClass @java.lang.Class deriving Class
+
+data JClassArray = JClassArray @java.lang.Class[] deriving Class
+
+instance JArray JavaClass JClassArray
+
 newInstance :: (a <: Object) => String -> [Object] -> Java c a
 newInstance className args = do
   arr <- arrayFromList args
@@ -38,7 +44,8 @@ newInstance className args = do
 invoke :: (a <: Object) => Object -> String -> [Object] -> Java c a
 invoke obj methodName args = do
   arr <- arrayFromList args
-  r <- invokeMethod obj methodName arr
+  typeArr <- arrayFromList []
+  r <- invokeMethod obj methodName arr typeArr
   return r
 
 test :: String -> IO Bool
