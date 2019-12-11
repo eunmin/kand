@@ -32,6 +32,7 @@
                      (fn [[ast rst]]
                        (tokenize rst "" (append-token (append-token result buf) ast))))
     (= \) x) (right [(append-token result buf) xs])
+    (= \' x) (tokenize (concat "(quote " xs ")") buf result)
     (= \" x) (m/bind (tokenize-string s "" result)
                      (fn [[s rst]]
                        (tokenize rst "" (append-token (append-token result buf) s))))

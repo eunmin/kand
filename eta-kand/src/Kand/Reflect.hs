@@ -41,22 +41,23 @@ newInstance className args = do
   obj <- newObject cls arr
   return $ unsafeCast obj
 
-invoke :: (a <: Object) => Object -> String -> [Object] -> Java c a
-invoke obj methodName args = do
+invoke :: (a <: Object) => Object -> String -> [Object] -> [String] -> Java c a
+invoke obj methodName args argClasses = do
   arr <- arrayFromList args
-  typeArr <- arrayFromList []
+  (argTypes :: [JClass Object]) <- mapM forName argClasses
+  typeArr <- arrayFromList argTypes
   r <- invokeMethod obj methodName arr typeArr
   return r
 
 test :: String -> IO Bool
 test s = java $ do
   obj <- newInstance "java.lang.String" [(superCast $ toJString s)]
-  r <- invoke obj "isEmpty" []
+  r <- invoke obj "isEmpty" [] []
   r2 <- r <.> booleanValue
   return r2
 
 test2 :: String -> IO JInteger
 test2 s = java $ do
   obj <- newInstance "java.lang.String" [(superCast $ toJString s)]
-  r <- invoke obj "indexOf" [ superCast $ (toJava (0 :: Int) :: JInteger) ]
+  r <- invoke obj "indexOf" [ superCast $ (toJava (0 :: Int) :: JInteger) ] []
   return r
