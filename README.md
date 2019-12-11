@@ -74,6 +74,14 @@ java -jar target/kand-0.1.0-SNAPSHOT-standalone.jar
 
 - [ASM Bytecode Viewer](https://plugins.jetbrains.com/plugin/10302-asm-bytecode-viewer)
 
+### Books
+
+- [Thinking with Types](https://leanpub.com/thinking-with-types)
+
+### Articles
+
+- [CLOJURE VS. THE STATIC TYPING WORLD](https://lispcast.com/clojure-and-types/)
+
 ### Friend Projects
 
 - [lengine](https://github.com/gkm2164/lengine)
