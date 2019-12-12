@@ -67,7 +67,11 @@
   (testing "String"
     (let [s "\"a b c\""
           {:keys [right]} (tokenize s "" [])]
-      (is (= ["\"a b c\""] (first right))))))
+      (is (= ["\"a b c\""] (first right)))))
+  (testing "Quote literal"
+    (let  [s "'a"
+           {:keys [right]} (tokenize s "" [])]
+      (is (= [["quote" "a"]] (first right))))))
 
 (deftest tokenize-error []
   (testing "Mismatched string"
