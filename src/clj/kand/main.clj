@@ -12,7 +12,7 @@
   ((analyze exp) env))
 
 (defn repl [env s]
-  (print "> ")
+  (print (str (:name (:core/*module* env)) "> "))
   (flush)
   (let [line (read-line)
         [command & args] (split line #"\s+")]
