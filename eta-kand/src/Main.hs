@@ -23,9 +23,13 @@ repl env = do
                                repl env
               Right exprs -> do let (result, newEnv) =
                                       foldl (\(_, env) exp -> eval exp env) (Right KandUnit, env) exprs
-                                putStrLn $ show result
-                                hFlush stdout
-                                repl newEnv
+                                case result of
+                                  Left error -> do putStrLn $ show error
+                                                   hFlush stdout
+                                                   repl env
+                                  Right value -> do putStrLn $ show value
+                                                    hFlush stdout
+                                                    repl newEnv
 
 main :: IO()
 main = do
