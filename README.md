@@ -85,3 +85,9 @@ java -jar target/kand-0.1.0-SNAPSHOT-standalone.jar
 ### Friend Projects
 
 - [lengine](https://github.com/gkm2164/lengine)
+
+### Type Inference
+
+- [Algorithm W Step by Step](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.65.7733&rep=rep1&type=pdf)
+- [Principal type-schemes for functional programs](https://web.cs.wpi.edu/~cs4536/c12/milner-damas_principal_types.pdf)
+- [linguae](https://github.com/igstan/linguae/tree/master/lingua-006-hm-inference-scala)
