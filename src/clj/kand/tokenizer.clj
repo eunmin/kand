@@ -1,7 +1,5 @@
 (ns kand.tokenizer
-  (:require [clojure.string :refer [blank?]]
-            [cats.core :as m]
-            [cats.monad.either :refer :all]))
+  (:require [clojure.string :refer [blank?]]))
 
 (defn append-token [result token]
   (if (= "" token)
@@ -13,29 +11,27 @@
     (if (empty? buf)
       (if (= \" x)
         (tokenize-string xs (str buf x) result)
-        (left {:message "Not String literal"}))
+        (throw (ex-info "Not String literal" {:x x})))
       (if (= \" x)
-        (right [(str buf x) xs])
+        [(str buf x) xs]
         (tokenize-string xs (str buf x) result)))
     (if (empty? buf)
-      (right ["" xs])
-      (left {:message "Mismatched String"}))))
+      ["" xs]
+      (throw (ex-info "Mismatched String" {:xs xs})))))
 
 (defmulti tokenize (fn [s _ _] s))
 
 (defmethod tokenize nil [_ buf result]
-  (right [(append-token result buf) ""]))
+  [(append-token result buf) ""])
 
 (defmethod tokenize :default [[x & xs :as s] buf result]
   (cond
-    (= \( x) (m/bind (tokenize xs "" [])
-                     (fn [[ast rst]]
-                       (tokenize rst "" (append-token (append-token result buf) ast))))
-    (= \) x) (right [(append-token result buf) xs])
+    (= \( x) (let [[ast rst] (tokenize xs "" [])]
+               (tokenize rst "" (append-token (append-token result buf) ast)))
+    (= \) x) [(append-token result buf) xs]
     (= \' x) (tokenize (concat "(quote " xs ")") buf result)
-    (= \" x) (m/bind (tokenize-string s "" result)
-                     (fn [[s rst]]
-                       (tokenize rst "" (append-token (append-token result buf) s))))
-    (nil? x) (left {:message "Mismatched parentheses"})
+    (= \" x) (let [[s rst] (tokenize-string s "" result)]
+               (tokenize rst "" (append-token (append-token result buf) s)))
+    (nil? x) (throw (ex-info "Mismatched parentheses" {:xs xs}))
     (blank? (str x)) (tokenize xs "" (append-token result buf))
     :else (tokenize xs (str buf x) result)))

@@ -4,9 +4,7 @@
   (:require [clojure.string :refer [split]]
             [kand.parser :refer [parse]]
             [kand.analyzer :refer [analyze]]
-            [kand.core :refer [core-env]]
-            [cats.core :as m]
-            [cats.monad.either :refer :all]))
+            [kand.core :refer [core-env]]))
 
 (defn eval [exp env]
   ((analyze exp) env))
@@ -18,18 +16,20 @@
         [command & args] (split line #"\s+")]
     (case command
       ":quit" (println "Bye See you soon!")
-      (let [result (m/fmap #(reduce (fn [[_ env] exp]
-                                       (eval exp env))
-                                     [nil env] %)
-                           (parse (str s line)))]
-        (if (right? result)
-          (println (first (:right result)))
-          (let [message (-> result :left :message)]
+      (try
+        (let [result (reduce (fn [[_ env] exp]
+                               (eval exp env))
+                             [nil env]
+                             (parse (str s line)))]
+          (println (first result))
+          (repl (second result) ""))
+        (catch Exception e
+          (let [message (.getMessage e)]
             (if (or (= message "Mismatched String")
                     (= message "Mismatched parentheses"))
               (repl env (str line "\n"))
-              (println "Error: " message))))
-        (repl (second (:right result)) "")))))
+              (do (println "Error: " message)
+                  (repl nil "")))))))))
 
 (defn -main [& args]
   (println "Kand REPL\nTo exit type :quit")

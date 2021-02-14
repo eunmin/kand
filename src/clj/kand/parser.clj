@@ -1,65 +1,60 @@
 (ns kand.parser
   (:require [kand.tokenizer :refer [tokenize]]
-            [kand.type :refer :all]
-            [cats.core :as m]
-            [cats.context :as ctx]
-            [cats.monad.either :refer :all :as either]))
+            [kand.type :refer :all]))
 
 (defmulti parse-token (fn [token]
                         (when (vector? token)
                           (keyword (first token)))))
 
-(defmethod parse-token :if [[_ pred t f & rst]]
+(defmethod parse-token :if [[_ pred t f & rst :as token]]
   (if rst
-    (left {:message "Too many arguments to if"})
-    (m/mlet [p (parse-token pred)
-             t (parse-token t)
-             f (parse-token f)]
-            (m/return (->If p t f)))))
+    (throw (ex-info "Too many arguments to if" {:token token}))
+    (let [p (parse-token pred)
+          t (parse-token t)
+          f (parse-token f)]
+      (->If p t f))))
 
-(defmethod parse-token :def [[_ def-name body & rst]]
+(defmethod parse-token :def [[_ def-name body & rst :as token]]
   (if rst
-    (left {:message "Too many arguments to def"})
+    (throw (ex-info "Too many arguments to def" {:token token}))
     (if (vector? def-name)
       (let [[sym-token & args-token] def-name]
-        (m/mlet [sym (parse-token sym-token)
-                 args (parse-token ["fn" (vec args-token) body])]
-                (m/return (->Def sym args))))
-      (m/mlet [sym (parse-token def-name)
-               body (parse-token body)]
-              (m/return (->Def sym body))))))
+        (let [sym (parse-token sym-token)
+              args (parse-token ["fn" (vec args-token) body])]
+          (->Def sym args)))
+      (let [sym (parse-token def-name)
+            body (parse-token body)]
+        (->Def sym body)))))
 
-(defmethod parse-token :fn [[_ arg-tokens body-token & rst]]
+(defmethod parse-token :fn [[_ arg-tokens body-token & rst :as token]]
   (if rst
-    (left {:message "Too many arguments to fn"})
+    (throw (ex-info "Too many arguments to fn" {:token token}))
     (if (vector? arg-tokens)
-      (m/mlet [args (ctx/with-context either/context
-                      (m/mapseq parse-token arg-tokens))
-               body (parse-token body-token)]
-        (m/return (->Lambda args body)))
-      (left {:message "Parameter declaration should be a vector"}))))
+      (let [args (map parse-token arg-tokens)
+            body (parse-token body-token)]
+        (->Lambda args body))
+      (throw (ex-info "Parameter declaration should be a vector" {:token token})))))
 
 (defmethod parse-token :quote [[_ value]]
-  (m/fmap #(->Quote %) (parse-token value)))
+  (->Quote (parse-token value)))
 
 (defmethod parse-token :module [[_ module-name]]
-  (m/fmap #(->Module %) (parse-token module-name)))
+  (->Module (parse-token module-name)))
 
 (defmethod parse-token :import [[_ module]]
-  (m/fmap #(->Import %) (parse-token module)))
+  (->Import (parse-token module)))
 
 (defmethod parse-token :eval [[_ code]]
-  (m/fmap #(->Eval %) (parse-token code)))
+  (->Eval (parse-token code)))
 
 (defmethod parse-token :default [token]
   (cond
-    (vector? token) (m/fmap #(->Application %) (m/mapseq parse-token token))
-    (= "true" token) (right (->True))
-    (= "false" token) (right (->False))
-    (string? (read-string token)) (right (->Str (read-string token)))
-    (number? (read-string token)) (right (->Num (read-string token)))
-    :else (right (->Symbol token))))
+    (vector? token) (->Application (map parse-token token))
+    (= "true" token) (->True)
+    (= "false" token) (->False)
+    (string? (read-string token)) (->Str (read-string token))
+    (number? (read-string token)) (->Num (read-string token))
+    :else (->Symbol token)))
 
 (defn parse [s]
-  (m/bind (tokenize s "" []) #(m/mapseq parse-token (first %)) ))
-
+  (map parse-token (first (tokenize s "" []))))

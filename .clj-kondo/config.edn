@@ -1,0 +1,3 @@
+{:linters
+ {:refer-all {:exclude [cats.monad.either
+                        kand.type]}}}
