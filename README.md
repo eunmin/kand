@@ -25,7 +25,7 @@ To exit type quit
 #kand.type.Num{:val 1}
 > (if (core/= 1 2) 1 2)
 #kand.type.Num{:val 2}
-> (core/. (core/quote nextInt) (core/new (core/quote java.util.Random)))
+> (core/. (quote nextInt) (core/new (quote java.util.Random)))
 #kand.type.Obj{:obj -1034235661}
 > :quit
 Bye See you soon!
