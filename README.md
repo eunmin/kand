@@ -13,19 +13,19 @@ To exit type quit
 #kand.type.Unit{}
 > (def b 2000)
 #kand.type.Unit{}
-> (+ a b)
+> (core/+ a b)
 #kand.type.Num{:val 2010}
-> (def add (fn (x y) (+ x y)))
+> (def add (fn (x y) (core/+ x y)))
 #kand.type.Unit{}
 > (add a b)
 #kand.type.Num{:val 2010}
-> (if (> 1 2) 1 2)
+> (if (core/> 1 2) 1 2)
 #kand.type.Num{:val 2}
-> (if (= 1 1) 1 2)                             
+> (if (core/= 1 1) 1 2)                             
 #kand.type.Num{:val 1}
-> (if (= 1 2) 1 2)
+> (if (core/= 1 2) 1 2)
 #kand.type.Num{:val 2}
-> (. (quote nextInt) (new (quote java.util.Random)))
+> (core/. (core/quote nextInt) (core/new (core/quote java.util.Random)))
 #kand.type.Obj{:obj -1034235661}
 > :quit
 Bye See you soon!
